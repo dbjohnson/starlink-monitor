@@ -14,4 +14,4 @@ docker-compose build && docker-compose up -d
 
 View at [http://localhost:3000](http://localhost:3000)
 
-![](resources/screenshot.png)
+![](resources/screenshot.mp4)
