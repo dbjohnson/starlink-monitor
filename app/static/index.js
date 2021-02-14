@@ -246,7 +246,7 @@ const renderObstructionMap = (data) => {
   const obst = data.starlink[data.starlink.length - 1].obstructionStats
   const max24 = obst.wedgeFractionObstructed.map((w, i) => {
     const vals = data.starlink.map(r => r.obstructionStats.wedgeFractionObstructed[i])
-    return vals.reduce((l, r) => Math.max(l, r), 0)
+    return Math.max(...vals)
   })
 
   const pdata = [{
@@ -329,29 +329,27 @@ const renderObstructionMap = (data) => {
 }
 
 
-const mostRecent = (array, smoothMethod = 'mean', targetLength = 1000) => {
-  const records = parseInt(document.getElementById('history').value)
-  return smooth(array.slice(-records), smoothMethod, targetLength)
-}
-
-
-const smooth = (array, method = 'mean', targetLength = 1000) => {
+const mostRecent = (array, sampleMethod = 'mean', targetLength = 1000) => {
   // reduce array to indicated maximum length, using indicated aggregation method
-  const rad = Math.round(array.length / targetLength)
+  const records = parseInt(document.getElementById('history').value)
+  const recent = array.slice(-records)
+
+  const rad = Math.round(recent.length / targetLength)
   if (rad <= 1) {
-    return array
+    return recent
   }
 
-  return array.filter((v, i) => i % rad === 0).map((v, i) => {
-    const vals = array.slice(Math.max(0, (i - 1) * rad), (i + 1) * rad + 1)
+  // sample & aggregate
+  return recent.filter((v, i) => i % rad === 0).map((v, i) => {
+    const vals = recent.slice(Math.max(0, (i - 1) * rad), (i + 1) * rad + 1)
     if (vals.length > 0) {
-      if (method === 'mean') {
+      if (sampleMethod === 'mean') {
         return vals.reduce((l, r) => l + r, 0) / vals.length
-      } else if (method === 'median') {
+      } else if (sampleMethod === 'median') {
         return vals.sort((a, b) => a < b ? 1 : -1)[Math.floor(vals.length / 2)]
-      } else if (method === 'max') {
+      } else if (sampleMethod === 'max') {
         return Math.max(...vals)
-      } else if (method === 'min') {
+      } else if (sampleMethod === 'min') {
         return Math.min(...vals)
       }
     }
