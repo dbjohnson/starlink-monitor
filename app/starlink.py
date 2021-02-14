@@ -14,15 +14,18 @@ def status():
 
 
 def history():
-    uptime = int(status()['deviceState']['uptimeS'])
     h = _fetch('get_history')['dishGetHistory']
-    # unroll circular buffers
+    # unroll ring buffers
     bufferlen = len(h['snr'])
-    bufferfilled = min(uptime, bufferlen)
-    start = int(h['current']) - bufferfilled
+    # use uptime (seconds) as proxy to see how much of the buffer we expect to
+    # be filled with meaningful data - data is sampled at 1Hz, so seconds
+    # of uptime ~= number of datapoints
+    uptime = int(status()['deviceState']['uptimeS'])
+    datapoints = min(uptime, bufferlen)
+    start = int(h['current']) - datapoints
     unroll_idx = [
         (start + i) % bufferlen
-        for i in range(bufferfilled)
+        for i in range(datapoints)
     ]
 
     return {
