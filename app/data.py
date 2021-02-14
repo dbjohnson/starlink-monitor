@@ -29,7 +29,7 @@ def _update_starlink_24():
     now = time.time()
     nrecords = len(DATA['starlink24']['snr'])
     DATA['starlink24']['timestamp'] = [
-        now - (nrecords - i - 1) * 2
+        now - (nrecords - i - 1)
         for i in range(nrecords)
     ]
 
