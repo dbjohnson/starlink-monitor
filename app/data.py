@@ -51,7 +51,7 @@ def _update_speedtest():
 def _trim_buffer(b):
     return [
         r for r in b
-        if (datetime.datetime.now() - r['timestamp']).total_seconds() <= BUFFER_SIZE_HOURS * 2600
+        if (datetime.datetime.now() - r['timestamp']).total_seconds() <= BUFFER_SIZE_HOURS * 3600
     ]
 
 
