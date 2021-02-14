@@ -274,6 +274,7 @@ const renderObstructionMap = (data) => {
         ],
         rotation: 90,
         direction: 'clockwise',
+        fixedrange: true,
       }
     },
     autoscale: true,
