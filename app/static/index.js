@@ -334,12 +334,13 @@ const mostRecent = (array, sampleMethod = 'mean', targetLength = 1000) => {
   const records = parseInt(document.getElementById('history').value)
   const recent = array.slice(-records)
 
-  const rad = Math.round(recent.length / targetLength)
-  if (rad <= 1) {
+  // no need to sample
+  if (recent.length <= targetLength) {
     return recent
   }
 
   // sample & aggregate
+  const rad = Math.round(recent.length / targetLength)
   return recent.filter((v, i) => i % rad === 0).map((v, i) => {
     const vals = recent.slice(Math.max(0, (i - 1) * rad), (i + 1) * rad + 1)
     if (vals.length > 0) {
