@@ -21,12 +21,14 @@ const layout = (title, showlegend=false) => {
     paper_bgcolor: '#fff0',
     plot_bgcolor: '#fff0',
     xaxis: {
-      tickformat: '%-I:%M%p'
+      tickformat: '%-I:%M%p',
+      fixedrange: true
     },
     yaxis: {
       showline: false,
       showgrid: false,
-      hoverformat: '.1f'
+      hoverformat: '.1f',
+      fixedrange: true
     },
     showlegend: showlegend,
     legend: {
@@ -178,6 +180,7 @@ const renderOutages = (data) => {
     range:  [0, 1],
     showline: false,
     showgrid: false,
+    fixedrange: true,
     tickvals: []
   }
   Plotly.newPlot('outages', pdata, lout, config);
