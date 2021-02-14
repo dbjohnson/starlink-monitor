@@ -71,7 +71,7 @@ const refresh = () => {
 
 
 const render = (data) => {
-  const x = mostRecent(data.starlink24.timestamp).map(ts => new Date(ts * 1000))
+  const x = mostRecent(data.starlink12.timestamp).map(ts => new Date(ts * 1000))
   renderPing(data, x)
   renderPingDrop(data, x)
   renderSNR(data, x)
@@ -83,7 +83,7 @@ const render = (data) => {
 
 
 const renderPing = (data, x) => {
-  const y = mostRecent(data.starlink24.popPingLatencyMs)
+  const y = mostRecent(data.starlink12.popPingLatencyMs)
   const pdata = [{
     x: x,
     y: y,
@@ -102,7 +102,7 @@ const renderPing = (data, x) => {
 
 const renderSNR = (data, x) => {
   // offset (9.2 vs 9) is just to give the sparkline some thickness at 0
-  const y = mostRecent(data.starlink24.snr).map(y => y - 9.2)
+  const y = mostRecent(data.starlink12.snr).map(y => y - 9.2)
   const pdata = [{
     x: x,
     y: y,
@@ -126,7 +126,7 @@ const renderSNR = (data, x) => {
 
 
 const renderPingDrop = (data, x) => {
-  const y = mostRecent(data.starlink24.popPingDropRate).map(v => v * 100)
+  const y = mostRecent(data.starlink12.popPingDropRate).map(v => v * 100)
   const pdata = [{
     x: x,
     y: y,
@@ -146,8 +146,8 @@ const renderPingDrop = (data, x) => {
 
 
 const renderThroughput = (data, x) => {
-  const y1 = mostRecent(data.starlink24.downlinkThroughputBps).map(v => v / 1e6)
-  const y2 = mostRecent(data.starlink24.uplinkThroughputBps).map(v => v / 1e6)
+  const y1 = mostRecent(data.starlink12.downlinkThroughputBps).map(v => v / 1e6)
+  const y2 = mostRecent(data.starlink12.uplinkThroughputBps).map(v => v / 1e6)
   const pdata = [{
     x: x,
     y: y1,
@@ -171,8 +171,8 @@ const renderThroughput = (data, x) => {
 
 
 const renderDowntime = (data, x) => {
-  const planned = mostRecent(data.starlink24.scheduled.map(v => v === true ? 0 : 1), 'max')
-  const obstructed = mostRecent(data.starlink24.obstructed.map(v => v === true ? 1 : 0), 'max')
+  const planned = mostRecent(data.starlink12.scheduled.map(v => v === true ? 0 : 1), 'max')
+  const obstructed = mostRecent(data.starlink12.obstructed.map(v => v === true ? 1 : 0), 'max')
 
   const pdata = [{
     x: x,

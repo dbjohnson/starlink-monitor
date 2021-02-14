@@ -1,6 +1,6 @@
 """
 This module will automatically poll starlink for status every 3 seconds, run
-speedtests every 15 minutes, and keep a 24 hour history buffer for each
+speedtests every 15 minutes, and keep a history buffer for each
 """
 import time
 import datetime
@@ -18,17 +18,15 @@ BUFFER_SIZE_HOURS = 72
 DATA = {
     'starlink': [],
     'speedtest': [],
-    'starlink24': None
+    'starlink12': None
 }
 
 
-def _update_starlink_24():
-    print('a')
-    DATA['starlink24'] = starlink.history()
-    print('b')
+def _update_starlink_12():
+    DATA['starlink12'] = starlink.history()
     now = time.time()
-    nrecords = len(DATA['starlink24']['snr'])
-    DATA['starlink24']['timestamp'] = [
+    nrecords = len(DATA['starlink12']['snr'])
+    DATA['starlink12']['timestamp'] = [
         now - (nrecords - i - 1)
         for i in range(nrecords)
     ]
@@ -63,7 +61,7 @@ scheduler.repeat(
 )
 
 scheduler.repeat(
-    _update_starlink_24,
+    _update_starlink_12,
     interval=datetime.timedelta(seconds=3)
 )
 

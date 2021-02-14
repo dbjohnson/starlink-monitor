@@ -14,17 +14,15 @@ def status():
 
 
 def history():
+    uptime = int(status()['deviceState']['uptimeS'])
     h = _fetch('get_history')['dishGetHistory']
     # unroll circular buffers
-    idx = int(h['current'])
     bufferlen = len(h['snr'])
-    start = idx - bufferlen
+    bufferfilled = min(uptime, bufferlen)
+    start = int(h['current']) - bufferfilled
     unroll_idx = [
-        idx
-        for i in range(start, idx)
-        for idx in [i % bufferlen]
-        # skip empty data
-        if not (h['popPingLatencyMs'][idx] == 0 and h['popPingDropRate'][idx] == 0)
+        (start + i) % bufferlen
+        for i in range(bufferfilled)
     ]
 
     return {
