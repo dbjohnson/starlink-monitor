@@ -27,12 +27,9 @@
       margin: 30px;
     }
 
-    @media screen and (max-width: 1000px) {
-      .flex-container>div {
-        height: 12vh;
-        width: 95vw;
-        margin: 10px;
-      }
+    .selector {
+      margin: auto;
+      width: 200px;
     }
 
     .flex-container>div>div {
@@ -40,8 +37,21 @@
       width: 100%;
     }
 
-    .center {
-      margin: auto;
+    @media screen and (max-width: 1000px) {
+      .flex-container>div {
+        height: 12vh;
+        width: 95vw;
+        margin: 10px;
+      }
+
+      .selector {
+        font-size: 24pt;
+        width: 500px;
+      }
+
+      .selector>select {
+        font-size: 24pt;
+      }
     }
   </style>
 </head>
@@ -76,7 +86,7 @@
   <a href="https://github.com/dbjohnson/starlink-monitor" target="_blank">
     <img src="github.svg" alt="Fork me on github" style="height:50px">
   </a>
-  <div class="center" style="width:150px;">
+  <div class="selector">
     <label for="history">History:</label>
     <select id="history" style="background-color:#00000099;color:white">
       <option value="600">10 minutes</option>

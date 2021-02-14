@@ -27,6 +27,7 @@ const layout = (title, showlegend = false) => {
     xaxis: {
       showline: false,
       showgrid: false,
+      nticks: 6,
       tickformat: '%-I:%M%p',
       fixedrange: true
     },
