@@ -197,24 +197,10 @@ const renderSpeedTest = (data) => {
 
 const renderObstructionMap = (data) => {
   const obst = data.starlink[data.starlink.length - 1].obstructionStats
-  let avg24 = obst.wedgeFractionObstructed.map((w, i) => {
+  const avg24 = obst.wedgeFractionObstructed.map((w, i) => {
     const vals = data.starlink.map(r => r.obstructionStats.wedgeFractionObstructed[i])
     return vals.reduce((l, r) => l + r, 0) / vals.length
   })
-
-  avg24 = [
-    0.07, 0.04, 0,
-    0, 0, 0,
-    0, 0, 0,
-    0, 0, 0,
-  ]
-
-  obst.wedgeFractionObstructed = [
-    0.02, 0.05, 0,
-    0.03, 0, 0,
-    0, 0, 0,
-    0, 0, 0,
-  ]
 
   const pdata = [{
     type: 'scatterpolar',
