@@ -230,8 +230,7 @@ const renderSpeedTest = (data) => {
   }, {
     x: data.speedtest.map(s => new Date(s.timestamp)),
     y: data.speedtest.map(s => s.upload / 1e6),
-    text: hover,
-    hoverinfo: 'text',
+    hoverinfo: 'skip',
     type: 'bar',
     name: 'upload',
     marker: {
