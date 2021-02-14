@@ -1,0 +1,12 @@
+version: "3.7"
+services:
+  flask:
+    build: .
+    ports:
+      - 3000:80
+    environment:
+      - TZ=US/Eastern
+      - PYTHONPATH=.
+    volumes:
+      - ./:/usr/src/app
+    command: python3 -m app.app

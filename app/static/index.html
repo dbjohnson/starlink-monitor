@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8" />
+    <title>Starlink</title>
+    <link rel="icon" type="image/x-icon" id="favicon" href="favicon.ico" />
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="index.js"></script>
+    <style>
+      body {
+        background-image: url('background.jpg');
+        background-position: center 0;
+        color: #ffffff;
+        font-family: arial;
+      }
+      .flex-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      .flex-container > div {
+        height: 200px;
+        width: 600px;
+        margin: 30px;
+      }
+      .center {
+        margin: auto;
+      }
+
+    </style>
+  </head>
+  <body>
+    <img src="starlink.svg" alt="Better than nothing beta" style="height:100px"/>
+    <div class="flex-container">
+      <div id="throughput"></div>
+      <div id="speedtests"></div>
+      <div id="ping"></div>
+      <div id="pingdrop"></div>
+      <div id="snr"></div>
+      <div id="outages"></div>
+      <div id="obstructions" style="height:300px"></div>
+    </div>
+    <div class="center" style="width: 200px">
+      <label for="history">History:</label>
+      <select id="history">
+        <option value="300">10 minutes</option>
+        <option value="1800">1 hour</option>
+        <option value="5400">3 hours</option>
+        <option value="20000">All</option>
+      </select>
+    </div>
+  </body>
+</html>
