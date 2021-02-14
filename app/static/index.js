@@ -258,6 +258,7 @@ const renderObstructionMap = (data) => {
         angle: 45,
         visible: true,
         range: [0, max24.reduce((l, r) => Math.max(l, r), 0.03)],
+        fixedrange: true,
       },
       angularaxis: {
         tickfont: {
