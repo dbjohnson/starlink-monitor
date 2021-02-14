@@ -21,6 +21,8 @@ const layout = (title, showlegend=false) => {
     paper_bgcolor: '#fff0',
     plot_bgcolor: '#fff0',
     xaxis: {
+      showline: false,
+      showgrid: false,
       tickformat: '%-I:%M%p',
       fixedrange: true
     },
@@ -38,7 +40,7 @@ const layout = (title, showlegend=false) => {
       bgcolor: '#fff0',
     },
     autoscale: true,
-    margin: {pad: 0, l: 30, r: 0, t: 40, b: 20, autoexpand: true},
+    margin: {pad: 0, l: 30, r: 10, t: 40, b: 20, autoexpand: true},
     barmode: 'grouped',
     title: {
       text: title,
@@ -65,7 +67,7 @@ const render = (data) => {
   renderPingDrop(data)
   renderSNR(data)
   renderThroughput(data)
-  renderOutages(data)
+  renderDowntime(data)
   renderSpeedTest(data)
   renderObstructionMap(data)
 }
@@ -80,10 +82,10 @@ const renderPing = (data) => {
     type: 'bar',
     name: 'ping',
     marker: {
-      'color': y,
-      'colorscale': 'Portland',
-      'cmin': 30,
-      'cmax': 120,
+      color: y,
+      colorscale: 'Portland',
+      cmin: 30,
+      cmax: 120,
     }
   }]
   Plotly.newPlot('ping', pdata, layout('Ping (ms)'), config);
@@ -91,40 +93,48 @@ const renderPing = (data) => {
 
 const renderSNR = (data) => {
   const x = mostRecent(data.starlink24.timestamp).map(ts => new Date(ts * 1000))
-  const y = mostRecent(data.starlink24.snr)
+  // offset (9.2 vs 9) is just to give the sparkline some thickness at 0
+  const y = mostRecent(data.starlink24.snr).map(y => y - 9.2)
   const pdata = [{
     x: x,
     y: y,
     type: 'bar',
     name: 'SNR',
     marker: {
-      'color': y.map(y => 9 - y),
-      'colorscale': 'Portland',
-      'cmin': 0,
-      'cmax': 9,
-    }
+      width: 10,
+      color: y.map(y => -y),
+      colorscale: 'Portland',
+      cmin: 0,
+      cmax: 10,
+    },
   }]
 
-  Plotly.newPlot('snr', pdata, layout('SNR'), config);
+  const lout = layout('SNR')
+  lout.yaxis.range = [-9, 0]
+
+  Plotly.newPlot('snr', pdata, lout, config);
 }
 
 
 const renderPingDrop = (data) => {
   const x = mostRecent(data.starlink24.timestamp).map(ts => new Date(ts * 1000))
-  const y = mostRecent(data.starlink24.popPingDropRate)
+  // offset is just to give the sparkline some thickness at 0
+  const y = mostRecent(data.starlink24.popPingDropRate).map(v => v + 0.003)
   const pdata = [{
     x: x,
     y: y,
     type: 'bar',
     name: 'ping drop rate',
     marker: {
-      'color': y,
-      'colorscale': 'Portland',
-      'cmin': 0,
-      'cmax': 1,
+      color: y,
+      colorscale: 'Portland',
+      cmin: 1,
+      cmax: 0,
     }
   }]
-  Plotly.newPlot('pingdrop', pdata, layout('Ping Drop (%)'), config);
+  const lout = layout('Ping drop (%)')
+
+  Plotly.newPlot('pingdrop', pdata, lout, config);
 }
 
 
@@ -138,7 +148,7 @@ const renderThroughput = (data) => {
     type: 'bar',
     name: 'download',
     marker: {
-      'color': d3colors[0],
+      color: d3colors[0],
     }
   }, {
     x: x,
@@ -146,7 +156,7 @@ const renderThroughput = (data) => {
     type: 'bar',
     name: 'upload',
     marker: {
-      'color': d3colors[1],
+      color: d3colors[1],
     }
   }]
 
@@ -154,7 +164,7 @@ const renderThroughput = (data) => {
 }
 
 
-const renderOutages = (data) => {
+const renderDowntime = (data) => {
   const x = mostRecent(data.starlink24.timestamp).map(ts => new Date(ts * 1000))
   const planned = mostRecent(data.starlink24.scheduled).map(v => v === true ? 0: 1)
   const obstructed = mostRecent(data.starlink24.obstructed).map(v => v === true ? 1: 0)
@@ -164,7 +174,7 @@ const renderOutages = (data) => {
     type: 'bar',
     name: 'beta',
     marker: {
-      'color': d3colors[0]
+      color: d3colors[0]
     }
   }, {
     x: x,
@@ -172,10 +182,10 @@ const renderOutages = (data) => {
     type: 'bar',
     name: 'obstructed',
     marker: {
-      'color': d3colors[1]
+      color: d3colors[1]
     }
   }]
-  const lout = layout('Outages', true)
+  const lout = layout('Downtime', true)
   lout.yaxis = {
     range:  [0, 1],
     showline: false,
@@ -183,7 +193,7 @@ const renderOutages = (data) => {
     fixedrange: true,
     tickvals: []
   }
-  Plotly.newPlot('outages', pdata, lout, config);
+  Plotly.newPlot('downtime', pdata, lout, config);
 }
 
 
@@ -194,7 +204,7 @@ const renderSpeedTest = (data) => {
     type: 'bar',
     name: 'download',
     marker: {
-      'color': d3colors[0]
+      color: d3colors[0]
     }
   }, {
     x: data.speedtest.map(s => new Date(s.timestamp)),
@@ -202,7 +212,7 @@ const renderSpeedTest = (data) => {
     type: 'bar',
     name: 'upload',
     marker: {
-      'color': d3colors[1],
+      color: d3colors[1],
     }
   }]
   Plotly.newPlot('speedtests', pdata, layout('Speedtests (Mbps)', true), config);
@@ -288,11 +298,11 @@ const renderObstructionMap = (data) => {
 
 const mostRecent = (array) => {
   const records = parseInt(document.getElementById('history').value)
-  return array.slice(-records)
+  return smooth(array.slice(-records), rad=0)
 }
 
 
-const smooth = (array, rad, method='mean') => {
+const smooth = (array, rad=5, method='mean') => {
   if (rad <= 1) {
     return array
   }
