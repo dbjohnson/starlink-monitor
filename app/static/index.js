@@ -89,6 +89,7 @@ const renderPing = (data, x) => {
     y: y,
     type: 'bar',
     name: 'ping',
+    hovertemplate: '%{y:.1f}%',
     marker: {
       color: y,
       colorscale: 'Portland',
@@ -108,6 +109,7 @@ const renderSNR = (data, x) => {
     y: y,
     type: 'bar',
     name: 'SNR',
+    hovertemplate: '%{y:.1f} dB',
     marker: {
       color: y.map(y => -y),
       colorscale: 'Portland',
@@ -132,6 +134,7 @@ const renderPingDrop = (data, x) => {
     y: y,
     type: 'bar',
     name: 'ping drop rate',
+    hovertemplate: '%{y:.1f}%',
     marker: {
       color: y,
       colorscale: 'Portland',
@@ -153,6 +156,7 @@ const renderThroughput = (data, x) => {
     y: y1,
     type: 'bar',
     name: 'download',
+    hovertemplate: '%{y:.1f} Mbps',
     marker: {
       color: d3colors[0],
     }
@@ -161,6 +165,7 @@ const renderThroughput = (data, x) => {
     y: y2,
     type: 'bar',
     name: 'upload',
+    hovertemplate: '%{y:.1f} Mbps',
     marker: {
       color: d3colors[1],
     }
@@ -204,9 +209,19 @@ const renderDowntime = (data, x) => {
 
 
 const renderSpeedTest = (data) => {
+  const hover = data.speedtest.map(s => [
+    `ISP: ${s.client.isp}`,
+    `host: ${s.server.sponsor} (${s.server.name})`,
+    `ping: ${s.ping.toFixed(1)} ms`,
+    `download: ${(s.download / 1e6).toFixed(0)} Mbps (rec: ${(s.bytes_received / 1e6).toFixed(0)} MB)`,
+    `upload: ${(s.upload / 1e6).toFixed(0)} Mbps (sent: ${(s.bytes_sent / 1e6).toFixed(0)} MB)`
+  ].join('<br>'))
+
   const pdata = [{
     x: data.speedtest.map(s => new Date(s.timestamp)),
     y: data.speedtest.map(s => s.download / 1e6),
+    text: hover,
+    hoverinfo: 'text',
     type: 'bar',
     name: 'download',
     marker: {
@@ -215,13 +230,17 @@ const renderSpeedTest = (data) => {
   }, {
     x: data.speedtest.map(s => new Date(s.timestamp)),
     y: data.speedtest.map(s => s.upload / 1e6),
+    text: hover,
+    hoverinfo: 'text',
     type: 'bar',
     name: 'upload',
     marker: {
       color: d3colors[1],
     }
   }]
-  Plotly.newPlot('speedtests', pdata, layout('Speedtests (Mbps)', true), config);
+  const lout = layout('Speedtests (Mbps)', true)
+  lout.hovermode = 'text'
+  Plotly.newPlot('speedtests', pdata, lout, config);
 }
 
 const renderObstructionMap = (data) => {
