@@ -17,12 +17,9 @@ def history():
     h = _fetch('get_history')['dishGetHistory']
     # unroll ring buffers
     bufferlen = len(h['snr'])
-    # use uptime (seconds) as proxy to see how much of the buffer we expect to
-    # be filled with meaningful data - data is sampled at 1Hz, so seconds
-    # of uptime ~= number of datapoints
-    uptime = int(status()['deviceState']['uptimeS'])
-    datapoints = min(uptime, bufferlen)
-    start = int(h['current']) - datapoints
+    current = int(h['current'])
+    datapoints = min(current, bufferlen)
+    start =  current - datapoints
     unroll_idx = [
         (start + i) % bufferlen
         for i in range(datapoints)
