@@ -102,26 +102,33 @@ const renderPing = (data, x) => {
 
 
 const renderSNR = (data, x) => {
-  // offset (9.2 vs 9) is just to give the sparkline some thickness at 0
-  const y = mostRecent(data.starlink12.snr).map(y => y - 9.2)
+  const y = mostRecent(data.starlink12.snr)
   const pdata = [{
     x: x,
-    y: y,
+    // invert the data so we can plot the bars as coming down from the top of
+    // the graph - i.e., SNR 9 => y = 0 (short bar)
+    // 0.5 just is to give the line some thickness at SNR = 9
+    y: y.map(y => (9 - y) || 0.5),
+    text: y,
     type: 'bar',
     name: 'SNR',
-    hovertemplate: '%{y:.1f} dB',
+    hovertemplate: '%{text}',
     marker: {
+      // invert for colormap: 9 = blue, 0 = red
       color: y.map(y => -y),
       colorscale: 'Portland',
-      cmin: 0,
-      cmax: 10,
+      cmin: -9,
+      cmax: 0,
     },
   }]
 
   const lout = layout('SNR')
-  lout.yaxis.range = [-10, 0]
+  // invert the range so 0 is at the top of the chart
+  lout.yaxis.range = [9, 0]
   lout.yaxis.tickmode = 'array'
-  lout.yaxis.tickvals = [0, -3, -6, -9]
+  // verse tick labels to match inverted range
+  lout.yaxis.tickvals = [0, 3, 6, 9]
+  lout.yaxis.ticktext = [9, 6, 3, 0]
 
   Plotly.newPlot('snr', pdata, lout, config);
 }
