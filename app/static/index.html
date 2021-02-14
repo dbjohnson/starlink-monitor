@@ -1,55 +1,90 @@
 <!DOCTYPE html>
 <html lang="en-US">
-  <head>
-    <meta charset="utf-8" />
-    <title>Starlink</title>
-    <link rel="icon" type="image/x-icon" id="favicon" href="favicon.ico" />
-    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-    <script src="index.js"></script>
-    <style>
-      body {
-        background-image: url('background.jpg');
-        background-position: center 0;
-        color: #ffffff;
-        font-family: arial;
-      }
-      .flex-container {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-      }
-      .flex-container > div {
-        height: 200px;
-        width: 600px;
-        margin: 30px;
-      }
-      .center {
-        margin: auto;
-      }
 
-    </style>
-  </head>
-  <body>
-    <a href="https://www.starlink.com/" target="_blank">
-      <img src="starlink.svg" alt="Better than nothing beta" style="height:50px">
-    </a>
-    <div class="flex-container">
-      <div id="throughput"></div>
-      <div id="speedtests"></div>
+<head>
+  <meta charset="utf-8" />
+  <title>Starlink</title>
+  <link rel="icon" type="image/x-icon" id="favicon" href="favicon.ico" />
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  <script src="index.js"></script>
+  <style>
+    body {
+      background-image: url('background.jpg');
+      background-position: center 0;
+      color: #ffffff;
+      font-family: arial;
+    }
+
+    .flex-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .flex-container>div {
+      height: 15vh;
+      width: 45vw;
+      margin: 30px;
+    }
+
+    @media screen and (max-width: 1000px) {
+      .flex-container>div {
+        height: 12vh;
+        width: 95vw;
+        margin: 10px;
+      }
+    }
+
+    .flex-container>div>div {
+      height: 100%;
+      width: 100%;
+    }
+
+    .center {
+      margin: auto;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="flex-container">
+    <div>
       <div id="ping"></div>
+    </div>
+    <div>
+      <div id="throughput"></div>
+    </div>
+    <div>
       <div id="pingdrop"></div>
+    </div>
+    <div>
+      <div id="speedtests"></div>
+    </div>
+    <div>
       <div id="snr"></div>
+    </div>
+    <div>
       <div id="downtime"></div>
-      <div id="obstructions" style="height:300px"></div>
     </div>
-    <div class="center" style="width: 200px">
-      <label for="history">History:</label>
-      <select id="history" style="background-color:#00000099;color:white">
-        <option value="600">10 minutes</option>
-        <option value="3600">1 hour</option>
-        <option value="10800">3 hours</option>
-        <option value="20000000">All</option>
-      </select>
+    <div style="height:300px">
+      <div id="obstructions"></div>
     </div>
-  </body>
+  </div>
+  <a href="https://www.starlink.com/" target="_blank">
+    <img src="starlink.svg" alt="Better than nothing beta" style="height:50px">
+  </a>
+  <a href="https://github.com/dbjohnson/starlink-monitor" target="_blank">
+    <img src="github.svg" alt="Fork me on github" style="height:50px">
+  </a>
+  <div class="center" style="width:150px;">
+    <label for="history">History:</label>
+    <select id="history" style="background-color:#00000099;color:white">
+      <option value="600">10 minutes</option>
+      <option value="3600">1 hour</option>
+      <option value="10800">3 hours</option>
+      <option value="20000000">All</option>
+    </select>
+  </div>
+</body>
+
 </html>

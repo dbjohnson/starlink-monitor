@@ -13,11 +13,15 @@ const d3colors = [
 
 const config = {
   displayModeBar: false,
+  dragmode: false
 }
 
-const layout = (title, showlegend=false) => {
+const layout = (title, showlegend = false) => {
   return {
-    font: {color: 'white'},
+    font: {
+      color: 'white',
+      size: document.body.clientWidth < 1000 ? 18 : 12
+    },
     paper_bgcolor: '#fff0',
     plot_bgcolor: '#fff0',
     xaxis: {
@@ -40,13 +44,16 @@ const layout = (title, showlegend=false) => {
       bgcolor: '#fff0',
     },
     autoscale: true,
-    margin: {pad: 0, l: 30, r: 10, t: 40, b: 20, autoexpand: true},
+    margin: { pad: 10, l: 50, r: 10, t: 40, b: 40, autoexpand: true },
     barmode: 'grouped',
     title: {
       text: title,
       x: 0.02,
       xanchor: 'left',
-      position: 'left'
+      position: 'left',
+      font: {
+        size: 24
+      }
     }
   }
 }
@@ -54,27 +61,27 @@ const layout = (title, showlegend=false) => {
 
 const refresh = () => {
   fetch('/api/data')
-  .then(response => response.json())
-  .then(data => {
-    render(data)
-    setTimeout(refresh, 3000)
-  })
+    .then(response => response.json())
+    .then(data => {
+      render(data)
+      setTimeout(refresh, 3000)
+    })
 }
 
 
 const render = (data) => {
-  renderPing(data)
-  renderPingDrop(data)
-  renderSNR(data)
-  renderThroughput(data)
-  renderDowntime(data)
+  const x = mostRecent(data.starlink24.timestamp).map(ts => new Date(ts * 1000))
+  renderPing(data, x)
+  renderPingDrop(data, x)
+  renderSNR(data, x)
+  renderThroughput(data, x)
+  renderDowntime(data, x)
   renderSpeedTest(data)
   renderObstructionMap(data)
 }
 
 
-const renderPing = (data) => {
-  const x = mostRecent(data.starlink24.timestamp).map(ts => new Date(ts * 1000))
+const renderPing = (data, x) => {
   const y = mostRecent(data.starlink24.popPingLatencyMs)
   const pdata = [{
     x: x,
@@ -91,8 +98,8 @@ const renderPing = (data) => {
   Plotly.newPlot('ping', pdata, layout('Ping (ms)'), config);
 }
 
-const renderSNR = (data) => {
-  const x = mostRecent(data.starlink24.timestamp).map(ts => new Date(ts * 1000))
+
+const renderSNR = (data, x) => {
   // offset (9.2 vs 9) is just to give the sparkline some thickness at 0
   const y = mostRecent(data.starlink24.snr).map(y => y - 9.2)
   const pdata = [{
@@ -101,7 +108,6 @@ const renderSNR = (data) => {
     type: 'bar',
     name: 'SNR',
     marker: {
-      width: 10,
       color: y.map(y => -y),
       colorscale: 'Portland',
       cmin: 0,
@@ -110,16 +116,16 @@ const renderSNR = (data) => {
   }]
 
   const lout = layout('SNR')
-  lout.yaxis.range = [-9, 0]
+  lout.yaxis.range = [-10, 0]
+  lout.yaxis.tickmode = 'array'
+  lout.yaxis.tickvals = [0, -3, -6, -9]
 
   Plotly.newPlot('snr', pdata, lout, config);
 }
 
 
-const renderPingDrop = (data) => {
-  const x = mostRecent(data.starlink24.timestamp).map(ts => new Date(ts * 1000))
-  // offset is just to give the sparkline some thickness at 0
-  const y = mostRecent(data.starlink24.popPingDropRate).map(v => v + 0.003)
+const renderPingDrop = (data, x) => {
+  const y = mostRecent(data.starlink24.popPingDropRate).map(v => v * 100)
   const pdata = [{
     x: x,
     y: y,
@@ -138,8 +144,7 @@ const renderPingDrop = (data) => {
 }
 
 
-const renderThroughput = (data) => {
-  const x = mostRecent(data.starlink24.timestamp).map(ts => new Date(ts * 1000))
+const renderThroughput = (data, x) => {
   const y1 = mostRecent(data.starlink24.downlinkThroughputBps).map(v => v / 1e6)
   const y2 = mostRecent(data.starlink24.uplinkThroughputBps).map(v => v / 1e6)
   const pdata = [{
@@ -164,10 +169,10 @@ const renderThroughput = (data) => {
 }
 
 
-const renderDowntime = (data) => {
-  const x = mostRecent(data.starlink24.timestamp).map(ts => new Date(ts * 1000))
-  const planned = mostRecent(data.starlink24.scheduled).map(v => v === true ? 0: 1)
-  const obstructed = mostRecent(data.starlink24.obstructed).map(v => v === true ? 1: 0)
+const renderDowntime = (data, x) => {
+  const planned = mostRecent(data.starlink24.scheduled.map(v => v === true ? 0 : 1), 'max')
+  const obstructed = mostRecent(data.starlink24.obstructed.map(v => v === true ? 1 : 0), 'max')
+
   const pdata = [{
     x: x,
     y: planned,
@@ -187,7 +192,7 @@ const renderDowntime = (data) => {
   }]
   const lout = layout('Downtime', true)
   lout.yaxis = {
-    range:  [0, 1],
+    range: [0, 1],
     showline: false,
     showgrid: false,
     fixedrange: true,
@@ -250,8 +255,16 @@ const renderObstructionMap = (data) => {
   }]
 
   const lout = {
-    title: 'Obstructions',
-    font: {color: 'white'},
+    title: {
+      text: 'Obstructions',
+      font: {
+        size: 24
+      }
+    },
+    font: {
+      color: 'white',
+      size: document.body.clientWidth < 1000 ? 18 : 12
+    },
     legend: {
       x: 0.9,
       xanchor: 'right',
@@ -267,6 +280,7 @@ const renderObstructionMap = (data) => {
         },
         angle: 45,
         visible: true,
+        nticks: 7,
         range: [0, max24.reduce((l, r) => Math.max(l, r), 0.03)],
         fixedrange: true,
       },
@@ -288,7 +302,7 @@ const renderObstructionMap = (data) => {
       }
     },
     autoscale: true,
-    margin: {pad: 0, l: 0, r: 0, t: 50, b: 20, autoexpand: true},
+    margin: { pad: 0, l: 0, r: 0, t: 50, b: 20, autoexpand: true },
     showlegend: true
   }
 
@@ -296,25 +310,30 @@ const renderObstructionMap = (data) => {
 }
 
 
-const mostRecent = (array) => {
+const mostRecent = (array, smoothMethod = 'mean', targetLength = 1000) => {
   const records = parseInt(document.getElementById('history').value)
-  return smooth(array.slice(-records), rad=0)
+  return smooth(array.slice(-records), smoothMethod, targetLength)
 }
 
 
-const smooth = (array, rad=5, method='mean') => {
+const smooth = (array, method = 'mean', targetLength = 1000) => {
+  // reduce array to indicated maximum length, using indicated aggregation method
+  const rad = Math.round(array.length / targetLength)
   if (rad <= 1) {
     return array
   }
-  return array.map((v, i) => {
-    const vals = array.slice(Math.max(0, i - rad), i + rad + 1).filter(v => v !== '')
+
+  return array.filter((v, i) => i % rad === 0).map((v, i) => {
+    const vals = array.slice(Math.max(0, (i - 1) * rad), (i + 1) * rad + 1)
     if (vals.length > 0) {
       if (method === 'mean') {
-        // TODO: optimize calculation using one-pass cumulative sum, when performance
-        // warrants the complexity
-        return vals.reduce((l, r) => l + r) / vals.length
+        return vals.reduce((l, r) => l + r, 0) / vals.length
       } else if (method === 'median') {
         return vals.sort((a, b) => a < b ? 1 : -1)[Math.floor(vals.length / 2)]
+      } else if (method === 'max') {
+        return Math.max(...vals)
+      } else if (method === 'min') {
+        return Math.min(...vals)
       }
     }
     return undefined

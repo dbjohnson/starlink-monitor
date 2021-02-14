@@ -18,10 +18,13 @@ def history():
     # unroll circular buffers
     idx = int(h['current'])
     bufferlen = len(h['snr'])
-    start = max(0, idx - bufferlen)
+    start = idx - bufferlen
     unroll_idx = [
-        i % bufferlen
+        idx
         for i in range(start, idx)
+        for idx in [i % bufferlen]
+        # skip empty data
+        if not (h['popPingLatencyMs'][idx] == 0 and h['popPingDropRate'][idx] == 0)
     ]
 
     return {
