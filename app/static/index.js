@@ -30,9 +30,9 @@ const layout = (title, showlegend=false) => {
     showlegend: showlegend,
     legend: {
       x: 1,
-      xanchor: 'right',
+      xanchor: 'left',
       y: 0.9,
-      bgcolor: '#fff3',
+      bgcolor: '#fff0',
     },
     autoscale: true,
     margin: {pad: 0, l: 30, r: 0, t: 40, b: 20, autoexpand: true},
@@ -161,7 +161,7 @@ const renderOutages = (data) => {
     type: 'bar',
     name: 'beta',
     marker: {
-      'color': 'purple',
+      'color': d3colors[0]
     }
   }, {
     x: x,
@@ -169,7 +169,7 @@ const renderOutages = (data) => {
     type: 'bar',
     name: 'obstructed',
     marker: {
-      'color': 'red',
+      'color': d3colors[1]
     }
   }]
   const lout = layout('Outages', true)
@@ -206,21 +206,21 @@ const renderSpeedTest = (data) => {
 
 const renderObstructionMap = (data) => {
   const obst = data.starlink[data.starlink.length - 1].obstructionStats
-  const avg24 = obst.wedgeFractionObstructed.map((w, i) => {
+  const max24 = obst.wedgeFractionObstructed.map((w, i) => {
     const vals = data.starlink.map(r => r.obstructionStats.wedgeFractionObstructed[i])
-    return vals.reduce((l, r) => l + r, 0) / vals.length
+    return vals.reduce((l, r) => Math.max(l, r), 0)
   })
 
   const pdata = [{
     type: 'scatterpolar',
     mode: 'lines',
-    name: '24hr avg',
-    r: avg24.map(w => [w, w]).reduce((l, r) => l.concat(r), []),
-    theta: avg24.map((w, i) => [i * 30 - 15, i * 30 + 15]).reduce((l, r) => l.concat(r), []),
+    name: '24hr max',
+    r: max24.map(w => [w, w]).reduce((l, r) => l.concat(r), []),
+    theta: max24.map((w, i) => [i * 30 - 15, i * 30 + 15]).reduce((l, r) => l.concat(r), []),
     fill: 'toself',
-    fillcolor: '#FF9B8888',
+    fillcolor: d3colors[0] + '88',
     line: {
-      color: '#FF9B8888'
+      color: d3colors[0] + '88'
     }
   }, {
     type: 'scatterpolar',
@@ -229,9 +229,9 @@ const renderObstructionMap = (data) => {
     r: obst.wedgeFractionObstructed.map(w => [w, w]).reduce((l, r) => l.concat(r), []),
     theta: obst.wedgeFractionObstructed.map((w, i) => [i * 30 - 15, i * 30 + 15]).reduce((l, r) => l.concat(r), []),
     fill: 'toself',
-    fillcolor: '#709BFF88',
+    fillcolor: d3colors[1] + '88',
     line: {
-      color: '#709BFF88'
+      color: d3colors[1] + '88'
     }
   }]
 
@@ -242,7 +242,7 @@ const renderObstructionMap = (data) => {
       x: 0.9,
       xanchor: 'right',
       y: 0.9,
-      bgcolor: '#fff3',
+      bgcolor: '#fff0',
     },
     paper_bgcolor: '#fff0',
     polar: {
@@ -253,7 +253,7 @@ const renderObstructionMap = (data) => {
         },
         angle: 45,
         visible: true,
-        range: [0, 0.1],
+        range: [0, max24.reduce((l, r) => Math.max(l, r), 0.1)],
       },
       angularaxis: {
         tickfont: {
