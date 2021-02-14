@@ -23,7 +23,17 @@ const layout = (title, showlegend=false) => {
     xaxis: {
       tickformat: '%-I:%M%p'
     },
+    yaxis: {
+      showline: false,
+      showgrid: false,
+    },
     showlegend: showlegend,
+    legend: {
+      x: 1,
+      xanchor: 'right',
+      y: 0.9,
+      bgcolor: '#fff3',
+    },
     autoscale: true,
     margin: {pad: 0, l: 30, r: 0, t: 40, b: 20, autoexpand: true},
     barmode: 'grouped',
@@ -48,7 +58,6 @@ const refresh = () => {
 
 
 const render = (data) => {
-  console.log(data)
   renderPing(data)
   renderPingDrop(data)
   renderSNR(data)
@@ -229,6 +238,12 @@ const renderObstructionMap = (data) => {
   const lout = {
     title: 'Obstructions',
     font: {color: 'white'},
+    legend: {
+      x: 0.9,
+      xanchor: 'right',
+      y: 0.9,
+      bgcolor: '#fff3',
+    },
     paper_bgcolor: '#fff0',
     polar: {
       bgcolor: '#fff0',
