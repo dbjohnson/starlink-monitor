@@ -26,6 +26,7 @@ const layout = (title, showlegend=false) => {
     yaxis: {
       showline: false,
       showgrid: false,
+      hoverformat: '.1f'
     },
     showlegend: showlegend,
     legend: {
@@ -83,7 +84,7 @@ const renderPing = (data) => {
       'cmax': 120,
     }
   }]
-  Plotly.newPlot('ping', pdata, layout('Ping'), config);
+  Plotly.newPlot('ping', pdata, layout('Ping (ms)'), config);
 }
 
 const renderSNR = (data) => {
@@ -121,7 +122,7 @@ const renderPingDrop = (data) => {
       'cmax': 1,
     }
   }]
-  Plotly.newPlot('pingdrop', pdata, layout('Ping Drop'), config);
+  Plotly.newPlot('pingdrop', pdata, layout('Ping Drop (%)'), config);
 }
 
 
@@ -147,7 +148,7 @@ const renderThroughput = (data) => {
     }
   }]
 
-  Plotly.newPlot('throughput', pdata, layout('Throughput', true), config);
+  Plotly.newPlot('throughput', pdata, layout('Throughput (Mbps)', true), config);
 }
 
 
@@ -201,7 +202,7 @@ const renderSpeedTest = (data) => {
       'color': d3colors[1],
     }
   }]
-  Plotly.newPlot('speedtests', pdata, layout('Speedtests', true), config);
+  Plotly.newPlot('speedtests', pdata, layout('Speedtests (Mbps)', true), config);
 }
 
 const renderObstructionMap = (data) => {
@@ -253,7 +254,7 @@ const renderObstructionMap = (data) => {
         },
         angle: 45,
         visible: true,
-        range: [0, max24.reduce((l, r) => Math.max(l, r), 0.1)],
+        range: [0, max24.reduce((l, r) => Math.max(l, r), 0.03)],
       },
       angularaxis: {
         tickfont: {
