@@ -20,14 +20,14 @@ const layout = (title, showlegend = false) => {
   return {
     font: {
       color: 'white',
-      size: document.body.clientWidth < 1000 ? 18 : 12
+      size: document.body.clientWidth < 800 ? 18 : 12
     },
     paper_bgcolor: '#fff0',
     plot_bgcolor: '#fff0',
     xaxis: {
       showline: false,
       showgrid: false,
-      nticks: 6,
+      nticks: 5,
       tickformat: '%-I:%M%p',
       fixedrange: true
     },
@@ -61,37 +61,42 @@ const layout = (title, showlegend = false) => {
 
 
 const refresh = () => {
-  fetch('/api/data')
+  const history = document.getElementById('history')
+  const secs = history ? history.value : 600
+  fetch(`/api/data?secs=${secs}`)
     .then(response => response.json())
     .then(data => {
-      render(data)
-      setTimeout(refresh, 3000)
+      setTimeout(refresh, 1000)
+      try {
+        render(data)
+      } catch (e) {
+        console.log(e)
+        console.log(data)
+      }
     })
 }
 
 
 const render = (data) => {
-  const x = mostRecent(data.starlink12.timestamp).map(ts => new Date(ts * 1000))
-  renderPing(data, x)
-  renderPingDrop(data, x)
-  renderSNR(data, x)
-  renderThroughput(data, x)
-  renderDowntime(data, x)
+  renderPing(data)
+  renderPingDrop(data)
+  renderSNR(data)
+  renderThroughput(data)
+  renderDowntime(data)
   renderSpeedTest(data)
   renderObstructionMap(data)
 }
 
 
-const renderPing = (data, x) => {
-  const y = mostRecent(data.starlink12.popPingLatencyMs)
+const renderPing = (data) => {
   const pdata = [{
-    x: x,
-    y: y,
+    x: data.starlink.timestamp.map(ts => new Date(ts * 1000)),
+    y: data.starlink.popPingLatencyMs,
     type: 'bar',
     name: 'ping',
-    hovertemplate: '%{y:.1f}%',
+    hovertemplate: '%{y:.1f}ms',
     marker: {
-      color: y,
+      color: data.starlink.popPingLatencyMs,
       colorscale: 'Portland',
       cmin: 30,
       cmax: 120,
@@ -101,9 +106,12 @@ const renderPing = (data, x) => {
 }
 
 
-const renderSNR = (data, x) => {
-  const y = mostRecent(data.starlink12.snr)
+const renderSNR = (data) => {
+  const x = data.starlink.timestamp.map(ts => new Date(ts * 1000))
+  const y = data.starlink.snr
   const pdata = [{
+    x: x,
+    y: y,
     x: x,
     // invert the data so we can plot the bars as coming down from the top of
     // the graph - i.e., SNR 9 => y = 0 (short bar)
@@ -134,8 +142,9 @@ const renderSNR = (data, x) => {
 }
 
 
-const renderPingDrop = (data, x) => {
-  const y = mostRecent(data.starlink12.popPingDropRate).map(v => v * 100)
+const renderPingDrop = (data) => {
+  const x = data.starlink.timestamp.map(ts => new Date(ts * 1000))
+  const y = data.starlink.popPingDropRate.map(v => v * 100)
   const pdata = [{
     x: x,
     y: y,
@@ -155,9 +164,10 @@ const renderPingDrop = (data, x) => {
 }
 
 
-const renderThroughput = (data, x) => {
-  const y1 = mostRecent(data.starlink12.downlinkThroughputBps).map(v => v / 1e6)
-  const y2 = mostRecent(data.starlink12.uplinkThroughputBps).map(v => v / 1e6)
+const renderThroughput = (data) => {
+  const x = data.starlink.timestamp.map(ts => new Date(ts * 1000))
+  const y1 = data.starlink.downlinkThroughputBps.map(v => v / 1e6)
+  const y2 = data.starlink.uplinkThroughputBps.map(v => v / 1e6)
   const pdata = [{
     x: x,
     y: y1,
@@ -182,9 +192,10 @@ const renderThroughput = (data, x) => {
 }
 
 
-const renderDowntime = (data, x) => {
-  const planned = mostRecent(data.starlink12.scheduled.map(v => v === true ? 0 : 1), 'max')
-  const obstructed = mostRecent(data.starlink12.obstructed.map(v => v === true ? 1 : 0), 'max')
+const renderDowntime = (data) => {
+  const x = data.starlink.timestamp.map(ts => new Date(ts * 1000))
+  const planned = data.starlink.scheduled.map(v => [true, null].includes(v) ? 0 : 1)
+  const obstructed = data.starlink.obstructed.map(v => v === true ? 1 : 0)
 
   const pdata = [{
     x: x,
@@ -216,17 +227,18 @@ const renderDowntime = (data, x) => {
 
 
 const renderSpeedTest = (data) => {
-  const hover = data.speedtest.map(s => [
-    `ISP: ${s.client.isp}`,
-    `host: ${s.server.sponsor} (${s.server.name})`,
-    `ping: ${s.ping.toFixed(1)} ms`,
-    `download: ${(s.download / 1e6).toFixed(0)} Mbps (rec: ${(s.bytes_received / 1e6).toFixed(0)} MB)`,
-    `upload: ${(s.upload / 1e6).toFixed(0)} Mbps (sent: ${(s.bytes_sent / 1e6).toFixed(0)} MB)`
+  const hover = data.speedtest.timestamp.map((s, i) => [
+    `ISP: ${data.speedtest.client[i].isp}`,
+    `host: ${data.speedtest.server[i].sponsor} (${data.speedtest.server[i].name})`,
+    `ping: ${data.speedtest.ping[i].toFixed(1)} ms`,
+    `download: ${(data.speedtest.download[i] / 1e6).toFixed(0)} Mbps (rec: ${(data.speedtest.bytes_received[i] / 1e6).toFixed(0)} MB)`,
+    `upload: ${(data.speedtest.upload[i] / 1e6).toFixed(0)} Mbps (sent: ${(data.speedtest.bytes_sent[i] / 1e6).toFixed(0)} MB)`
   ].join('<br>'))
 
+  const x = data.speedtest.timestamp.map(ts => new Date(ts * 1000))
   const pdata = [{
-    x: data.speedtest.map(s => new Date(s.timestamp)),
-    y: data.speedtest.map(s => s.download / 1e6),
+    x: x,
+    y: data.speedtest.download.map(d => d / 1e6),
     text: hover,
     hoverinfo: 'text',
     type: 'bar',
@@ -235,8 +247,8 @@ const renderSpeedTest = (data) => {
       color: d3colors[0]
     }
   }, {
-    x: data.speedtest.map(s => new Date(s.timestamp)),
-    y: data.speedtest.map(s => s.upload / 1e6),
+    x: x,
+    y: data.speedtest.upload.map(u => u / 1e6),
     hoverinfo: 'skip',
     type: 'bar',
     name: 'upload',
@@ -250,18 +262,18 @@ const renderSpeedTest = (data) => {
 }
 
 const renderObstructionMap = (data) => {
-  const obst = data.starlink[data.starlink.length - 1].obstructionStats
-  const max24 = obst.wedgeFractionObstructed.map((w, i) => {
-    const vals = data.starlink.map(r => r.obstructionStats.wedgeFractionObstructed[i])
+  const obst = data.status.obstructionStats[data.status.obstructionStats.length - 1]
+  const maxseen = obst.wedgeFractionObstructed.map((w, i) => {
+    const vals = data.status.obstructionStats.map(r => r.wedgeFractionObstructed[i])
     return Math.max(...vals)
   })
 
   const pdata = [{
     type: 'scatterpolar',
     mode: 'lines',
-    name: '24hr max',
-    r: max24.map(w => [w, w]).reduce((l, r) => l.concat(r), []),
-    theta: max24.map((w, i) => [i * 30 - 15, i * 30 + 15]).reduce((l, r) => l.concat(r), []),
+    name: 'max',
+    r: maxseen.map(w => [w, w]).reduce((l, r) => l.concat(r), []),
+    theta: maxseen.map((w, i) => [i * 30 - 15, i * 30 + 15]).reduce((l, r) => l.concat(r), []),
     fill: 'toself',
     fillcolor: d3colors[0] + '88',
     line: {
@@ -289,7 +301,7 @@ const renderObstructionMap = (data) => {
     },
     font: {
       color: 'white',
-      size: document.body.clientWidth < 1000 ? 18 : 12
+      size: document.body.clientWidth < 800 ? 18 : 12
     },
     legend: {
       x: 0.9,
@@ -307,7 +319,7 @@ const renderObstructionMap = (data) => {
         angle: 45,
         visible: true,
         nticks: 7,
-        range: [0, max24.reduce((l, r) => Math.max(l, r), 0.03)],
+        range: [0, maxseen.reduce((l, r) => Math.max(l, r), 0.03)],
         fixedrange: true,
       },
       angularaxis: {
@@ -335,34 +347,5 @@ const renderObstructionMap = (data) => {
   Plotly.newPlot('obstructions', pdata, lout, config)
 }
 
-
-const mostRecent = (array, sampleMethod = 'mean', targetLength = 1000) => {
-  // reduce array to indicated maximum length, using indicated aggregation method
-  const records = parseInt(document.getElementById('history').value)
-  const recent = array.slice(-records)
-
-  // no need to sample
-  if (recent.length <= targetLength) {
-    return recent
-  }
-
-  // sample & aggregate
-  const rad = Math.round(recent.length / targetLength)
-  return recent.filter((v, i) => i % rad === 0).map((v, i) => {
-    const vals = recent.slice(Math.max(0, (i - 1) * rad), (i + 1) * rad + 1)
-    if (vals.length > 0) {
-      if (sampleMethod === 'mean') {
-        return vals.reduce((l, r) => l + r, 0) / vals.length
-      } else if (sampleMethod === 'median') {
-        return vals.sort((a, b) => a < b ? 1 : -1)[Math.floor(vals.length / 2)]
-      } else if (sampleMethod === 'max') {
-        return Math.max(...vals)
-      } else if (sampleMethod === 'min') {
-        return Math.min(...vals)
-      }
-    }
-    return undefined
-  })
-}
 
 refresh()

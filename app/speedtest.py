@@ -1,3 +1,5 @@
+import time
+
 import speedtest
 
 
@@ -7,4 +9,7 @@ def test():
     s.get_best_server()
     s.download(threads=None)
     s.upload(threads=None)
-    return s.results.dict()
+    return {
+        **s.results.dict(),
+        'timestamp': time.time()
+    }

@@ -1,4 +1,5 @@
 from flask import Flask
+from flask import request
 from flask import jsonify
 
 from . import data
@@ -8,7 +9,9 @@ app = Flask(__name__)
 
 @app.route('/api/data')
 def _data():
-    return jsonify(data.DATA)
+    secs = int(request.args.get('secs', data.BUFFER_SIZE_SECS))
+    print(secs)
+    return jsonify(data.latest(secs))
 
 
 @app.route('/')
