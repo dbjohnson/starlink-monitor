@@ -20,7 +20,7 @@ const layout = (title, showlegend = false) => {
   return {
     font: {
       color: 'white',
-      size: document.body.clientWidth < 800 ? 18 : 12
+      size: document.body.clientWidth < 1000 ? 18 : 12
     },
     paper_bgcolor: '#fff0',
     plot_bgcolor: '#fff0',
@@ -301,11 +301,11 @@ const renderObstructionMap = (data) => {
     },
     font: {
       color: 'white',
-      size: document.body.clientWidth < 800 ? 18 : 12
+      size: document.body.clientWidth < 1000 ? 18 : 12
     },
     legend: {
-      x: 0.9,
-      xanchor: 'right',
+      x: 1,
+      xanchor: 'left',
       y: 0.9,
       bgcolor: '#fff0',
     },

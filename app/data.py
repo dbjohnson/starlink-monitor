@@ -38,15 +38,17 @@ def latest(history_secs=600, max_data_points=1000):
     number of data points
     """
     return {
-        k: _sample_buffer(
-            _trim_buffer(v, history_secs),
-            max_data_points
-        )
-        for k, v in {
-            'starlink': _starlink_history_merged(),
-            'speedtest': DATA['speedtest'],
-            'status': DATA['starlink_status']
-        }.items()
+        'speedtest': DATA['speedtest'],
+        **{
+            k: _sample_buffer(
+                _trim_buffer(v, history_secs),
+                max_data_points
+            )
+            for k, v in {
+                'starlink': _starlink_history_merged(),
+                'status': DATA['starlink_status']
+            }.items()
+        }
     }
 
 
