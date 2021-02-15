@@ -9,4 +9,5 @@ services:
       - PYTHONPATH=.
     volumes:
       - ./:/usr/src/app
+    restart: always
     command: python3 -m app.app
