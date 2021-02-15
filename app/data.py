@@ -22,7 +22,7 @@ print('data.py automatically runs status update checks in the background')
 SUBSCRIBERS = []
 STARLINK_REFRESH_SECS = int(os.getenv('STARLINK_REFRESH_SECS', 1))
 STARLINK_HISTORY_REFRESH_SECS = int(os.getenv('STARLINK_HISTORY_REFRESH_SECS', 30))
-SPEEDTEST_REFRESH_MINS = int(os.getenv('SPEEDTEST_REFRESH_MINS', 15))
+SPEEDTEST_REFRESH_MINS = int(os.getenv('SPEEDTEST_REFRESH_MINS', 30))
 BUFFER_SIZE_HOURS = int(os.getenv('BUFFER_SIZE_HOURS', 72))
 BUFFER_SIZE_SECS = BUFFER_SIZE_HOURS * 3600
 DATA = {
@@ -133,19 +133,19 @@ def _sample_buffer(b, max_data_points):
         else:
             try:
                 return [
-                    sum(sample) / (len(sample)) if sample else None
-                    for i in range(0, len(vals), stride)
+                    sum(sample) / len(sample) if sample else None
+                    for i in range(stride, len(vals), stride)
                     for sample in [[
                         v
-                        for v in [vals[i - stride: i + stride]]
+                        for v in vals[i - stride: i + stride]
                         if v is not None
                     ]]
                 ]
-            except TypeError:
+            except Exception:
                 # non-numeric type
                 return [
                     vals[i]
-                    for i in range(0, len(vals), stride)
+                    for i in range(stride, len(vals), stride)
                 ]
 
     return {

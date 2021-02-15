@@ -133,8 +133,8 @@ const renderSNR = (data) => {
   const lout = layout('SNR')
   // invert the range so 0 is at the top of the chart
   lout.yaxis.range = [9, 0]
+  // reverse tick labels to match inverted range
   lout.yaxis.tickmode = 'array'
-  // verse tick labels to match inverted range
   lout.yaxis.tickvals = [0, 3, 6, 9]
   lout.yaxis.ticktext = [9, 6, 3, 0]
 
@@ -194,8 +194,8 @@ const renderThroughput = (data) => {
 
 const renderDowntime = (data) => {
   const x = data.starlink.timestamp.map(ts => new Date(ts * 1000))
-  const planned = data.starlink.scheduled.map(v => [true, null].includes(v) ? 0 : 1)
-  const obstructed = data.starlink.obstructed.map(v => v === true ? 1 : 0)
+  const planned = data.starlink.scheduled.map(v => v === null ? true : v).map(v => v ? 0 : 1)
+  const obstructed = data.starlink.obstructed.map(v => v ? 1 : 0)
 
   const pdata = [{
     x: x,

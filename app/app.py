@@ -10,7 +10,6 @@ app = Flask(__name__)
 @app.route('/api/data')
 def _data():
     secs = int(request.args.get('secs', data.BUFFER_SIZE_SECS))
-    print(secs)
     return jsonify(data.latest(secs))
 
 
