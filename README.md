@@ -1,5 +1,7 @@
 # starlink-monitor
 
+[![CI to Docker Hub](https://github.com/dbjohnson/starlink-monitor/workflows/CI%20to%20Docker%20hub/badge.svg)](https://hub.docker.com/repository/docker/dbryanjohnson/starlink-monitor)
+
 Basic [monitoring webapp](http://localhost:3000) for [Starlink](https://starlink.com)
 
 Inspired by [ChuckTSI's work](https://github.com/ChuckTSI/BetterThanNothingWebInterface)
