@@ -74,17 +74,17 @@ if (document.documentURI.indexOf('github.io') >= 0) {
   document.addEventListener('DOMContentLoaded', (event) => {
     document.getElementById('historyselect').style.visibility = 'hidden'
   })
-} else {
-  const socket = io.connect()
-
-  socket.on('connect', function () {
-    startBroadcast()
-  })
-
-  socket.on('message', function (data) {
-    render(data)
-  })
 }
+
+const socket = io.connect()
+
+socket.on('connect', function () {
+  startBroadcast()
+})
+
+socket.on('message', function (data) {
+  render(data)
+})
 
 const startBroadcast = () => {
   const history = document.getElementById('history')
