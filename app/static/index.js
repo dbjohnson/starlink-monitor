@@ -84,8 +84,8 @@ const render = (data) => {
   renderSNR(data)
   renderThroughput(data)
   renderDowntime(data)
-  renderSpeedTest(data)
   renderObstructionMap(data)
+  renderSpeedTest(data)
 }
 
 
