@@ -26,13 +26,14 @@ const layout = (title, showlegend = false) => {
     paper_bgcolor: '#fff0',
     plot_bgcolor: '#fff0',
     xaxis: {
+      nticks: 4,
       showline: false,
       showgrid: false,
-      nticks: 5,
       tickformat: '%-I:%M%p',
       fixedrange: true
     },
     yaxis: {
+      nticks: 3,
       showline: false,
       gridcolor: '#ffffff30',
       hoverformat: '.1f',
