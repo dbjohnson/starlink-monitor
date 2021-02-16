@@ -294,8 +294,10 @@ const renderObstructionMap = (data) => {
     type: 'scatterpolar',
     mode: 'lines',
     name: 'max',
-    r: maxseen.map(w => [w, w]).reduce((l, r) => l.concat(r), []),
-    theta: maxseen.map((w, i) => [i * 30 - 15, i * 30 + 15]).reduce((l, r) => l.concat(r), []),
+    r: maxseen.map(w => [w, w, w]).reduce((l, r) => l.concat(r), []),
+    theta: maxseen.map((w, i) => i * 30).map(
+      theta => [theta - 15, theta, theta + 15]
+    ).reduce((l, r) => l.concat(r), []),
     fill: 'toself',
     fillcolor: d3colors[0] + '88',
     line: {
@@ -305,8 +307,10 @@ const renderObstructionMap = (data) => {
     type: 'scatterpolar',
     mode: 'lines',
     name: 'latest',
-    r: obst.wedgeFractionObstructed.map(w => [w, w]).reduce((l, r) => l.concat(r), []),
-    theta: obst.wedgeFractionObstructed.map((w, i) => [i * 30 - 15, i * 30 + 15]).reduce((l, r) => l.concat(r), []),
+    r: obst.wedgeFractionObstructed.map(w => [w, w, w]).reduce((l, r) => l.concat(r), []),
+    theta: obst.wedgeFractionObstructed.map((w, i) => i * 30).map(
+      theta => [theta - 15, theta, theta + 15]
+    ).reduce((l, r) => l.concat(r), []),
     fill: 'toself',
     fillcolor: d3colors[1] + '88',
     line: {
@@ -338,10 +342,9 @@ const renderObstructionMap = (data) => {
         tickfont: {
           size: 12
         },
-        angle: 45,
-        visible: false,
-        nticks: 1,
-        range: [0, maxseen.reduce((l, r) => Math.max(l, r), 0.03)],
+        angle: 0,
+        nticks: 4,
+        range: [0, Math.max(...maxseen.concat([0.03]))],
         fixedrange: true,
       },
       angularaxis: {
