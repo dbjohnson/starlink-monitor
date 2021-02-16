@@ -24,7 +24,7 @@ docker run -d -p 3000:80 \
 View at [http://localhost:3000](http://localhost:3000)
 
 
-## Installation for development
+## Build for development
 
 ```
 docker-compose build && docker-compose up -d
