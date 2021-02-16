@@ -1,5 +1,4 @@
 const d3colors = [
-
   '#1F77B4',
   '#FF7F0E',
   '#2CA02C',
@@ -61,15 +60,31 @@ const layout = (title, showlegend = false) => {
   }
 }
 
-const socket = io.connect()
+if (document.documentURI === 'https://dbjohnson.github.io/starlink-monitor/app/static/') {
+  // load data from s3 for github pages
+  fetch(
+    'https://github.com/dbjohnson/starlink-monitor/raw/main/resources/exampledata.json'
+  )
+    .then(response => response.json())
+    .then(data => {
+      render(data)
+    })
 
-socket.on('connect', function() {
-  startBroadcast()
-})
+  // hide history selector - doesn't work
+  document.addEventListener('DOMContentLoaded', (event) => {
+    document.getElementById('historyselect').style.visibility = 'hidden'
+  })
+} else {
+  const socket = io.connect()
 
-socket.on('message', function(data) {
-  render(data)
-})
+  socket.on('connect', function () {
+    startBroadcast()
+  })
+
+  socket.on('message', function (data) {
+    render(data)
+  })
+}
 
 const startBroadcast = () => {
   const history = document.getElementById('history')
@@ -79,7 +94,7 @@ const startBroadcast = () => {
 
 
 const render = (data) => {
-  document.getElementById('lastupdate').innerHTML = "Updated: " + (new Date()).toLocaleTimeString()
+  document.getElementById('lastupdate').innerHTML = 'Updated: ' + (new Date()).toLocaleTimeString()
   renderPing(data)
   renderPingDrop(data)
   renderSNR(data)

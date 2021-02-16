@@ -65,9 +65,11 @@
       .grid-container {
         grid-template-columns: 100%;
       }
+
       body {
         font-size: 24pt;
       }
+
       select {
         font-size: 24pt;
       }
@@ -115,7 +117,7 @@
   </a>
 
   <div style="float:right">
-    <div style="float:right">
+    <div id="historyselect" style="float:right">
       <label for="history">History:</label>
       <select id="history" onchange="startBroadcast()">
         <option value="900">15 mins</option>

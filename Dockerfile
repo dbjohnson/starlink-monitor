@@ -10,7 +10,7 @@ ENV BUFFER_SIZE_HOURS=72
 
 # install grpcurl
 WORKDIR /usr/local/bin
-RUN cd /usr/local/bin && curl -L https://github.com/fullstorydev/grpcurl/releases/download/v1.8.0/grpcurl_1.8.0_linux_x86_64.tar.gz | tar xzv
+RUN curl -L https://github.com/fullstorydev/grpcurl/releases/download/v1.8.0/grpcurl_1.8.0_linux_x86_64.tar.gz | tar xzv
 
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
