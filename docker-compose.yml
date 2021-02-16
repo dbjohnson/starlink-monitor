@@ -4,10 +4,5 @@ services:
     build: .
     ports:
       - 3000:80
-    environment:
-      - TZ=US/Eastern
-      - PYTHONPATH=.
-    volumes:
-      - ./:/usr/src/app
     restart: always
     command: python3 -m app.app
