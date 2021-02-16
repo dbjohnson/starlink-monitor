@@ -1,6 +1,6 @@
 # starlink-monitor
 
-[![CI to Docker Hub](https://github.com/dbjohnson/starlink-monitor/workflows/CI%20to%20Docker%20hub/badge.svg)](https://hub.docker.com/repository/docker/dbryanjohnson/starlink-monitor)
+[![push to dockerhub](https://github.com/dbjohnson/starlink-monitor/workflows/push%20to%20dockerhub/badge.svg)](https://hub.docker.com/repository/docker/dbryanjohnson/starlink-monitor)
 
 Basic [monitoring webapp](http://localhost:3000) for [Starlink](https://starlink.com)
 
