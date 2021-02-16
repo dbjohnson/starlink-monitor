@@ -12,6 +12,10 @@
     body {
       background-image: url('background.jpg');
       background-position: center 0;
+      background-color: #00000000;
+      color: #ffffff;
+      font-family: arial;
+      font-size: 14pt;
     }
 
     button {
@@ -39,10 +43,11 @@
     }
 
     select {
-      background-color: #00000099;
+      background-color: #00000000;
       color: #ffffff;
       font-family: arial;
       font-size: 14pt;
+      border: none;
     }
 
     .obst {
@@ -106,7 +111,6 @@
   </a>
 
   <div style="float:right">
-    <div id="lastupdate">Waiting...</div>
     <label for="history">History:</label>
     <select id="history" onchange="startBroadcast()">
       <option value="600">10 minutes</option>
@@ -114,6 +118,7 @@
       <option value="10800">3 hours</option>
       <option value="20000000">All</option>
     </select>
+    <div id="lastupdate" style="margin-top:5px">Waiting...</div>
   </div>
 </body>
 

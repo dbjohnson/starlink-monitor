@@ -54,7 +54,7 @@ const layout = (title, showlegend = false) => {
       xanchor: 'left',
       position: 'left',
       font: {
-        size: 24
+        size: 18
       }
     }
   }
@@ -228,38 +228,58 @@ const renderDowntime = (data) => {
 
 
 const renderSpeedTest = (data) => {
-  const hover = data.speedtest.timestamp.map((s, i) => [
-    `ISP: ${data.speedtest.client[i].isp}`,
-    `host: ${data.speedtest.server[i].sponsor} (${data.speedtest.server[i].name})`,
-    `ping: ${data.speedtest.ping[i].toFixed(1)} ms`,
-    `download: ${(data.speedtest.download[i] / 1e6).toFixed(0)} Mbps (rec: ${(data.speedtest.bytes_received[i] / 1e6).toFixed(0)} MB)`,
-    `upload: ${(data.speedtest.upload[i] / 1e6).toFixed(0)} Mbps (sent: ${(data.speedtest.bytes_sent[i] / 1e6).toFixed(0)} MB)`
-  ].join('<br>'))
+  if (data.speedtest.timestamp) {
+    const hover = data.speedtest.timestamp.map((s, i) => [
+      `ISP: ${data.speedtest.client[i].isp}`,
+      `host: ${data.speedtest.server[i].sponsor} (${data.speedtest.server[i].name})`,
+      `ping: ${data.speedtest.ping[i].toFixed(1)} ms`,
+      `download: ${(data.speedtest.download[i] / 1e6).toFixed(0)} Mbps (rec: ${(data.speedtest.bytes_received[i] / 1e6).toFixed(0)} MB)`,
+      `upload: ${(data.speedtest.upload[i] / 1e6).toFixed(0)} Mbps (sent: ${(data.speedtest.bytes_sent[i] / 1e6).toFixed(0)} MB)`
+    ].join('<br>'))
 
-  const x = data.speedtest.timestamp.map(ts => new Date(ts * 1000))
-  const pdata = [{
-    x: x,
-    y: data.speedtest.download.map(d => d / 1e6),
-    text: hover,
-    hoverinfo: 'text',
-    type: 'bar',
-    name: 'download',
-    marker: {
-      color: d3colors[0]
-    }
-  }, {
-    x: x,
-    y: data.speedtest.upload.map(u => u / 1e6),
-    hoverinfo: 'skip',
-    type: 'bar',
-    name: 'upload',
-    marker: {
-      color: d3colors[1],
-    }
-  }]
-  const lout = layout('Speedtests (Mbps)', true)
-  lout.hovermode = 'text'
-  Plotly.newPlot('speedtests', pdata, lout, config);
+    const x = data.speedtest.timestamp.map(ts => new Date(ts * 1000))
+    const pdata = [{
+      x: x,
+      y: data.speedtest.download.map(d => d / 1e6),
+      text: hover,
+      hoverinfo: 'text',
+      type: 'bar',
+      name: 'download',
+      marker: {
+        color: d3colors[0]
+      }
+    }, {
+      x: x,
+      y: data.speedtest.upload.map(u => u / 1e6),
+      hoverinfo: 'skip',
+      type: 'bar',
+      name: 'upload',
+      marker: {
+        color: d3colors[1],
+      }
+    }]
+    const lout = layout('Speedtests (Mbps)', true)
+    lout.hovermode = 'text'
+    Plotly.newPlot('speedtests', pdata, lout, config);
+  } else {
+    // gracefully handle startup before first result is ready
+    const lout = layout('Speedtests (Mbps)', true)
+    lout.xaxis.zeroline = false
+    lout.xaxis.tickmode = 'array'
+    lout.xaxis.tickvals = []
+    lout.xaxis.range = [0, 1]
+    lout.yaxis.zeroline = false
+    lout.yaxis.tickmode = 'array'
+    lout.yaxis.tickvals = []
+    lout.yaxis.range = [0, 1]
+    lout.annotations = [{
+      x: 0.1,
+      y: 0.5,
+      showarrow: false,
+      text: 'Waiting...',
+    }]
+    Plotly.newPlot('speedtests', [], lout, config);
+  }
 }
 
 const renderObstructionMap = (data) => {
@@ -297,7 +317,7 @@ const renderObstructionMap = (data) => {
     title: {
       text: 'Obstructions',
       font: {
-        size: 24
+        size: 18
       }
     },
     font: {
