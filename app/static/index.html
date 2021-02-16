@@ -102,26 +102,35 @@
     <div class="obst" id="obstructions"></div>
   </div>
 
-  <a href="https://www.starlink.com/" target="_blank">
-    <img src="starlink.svg" alt="Better than nothing beta" style="height:50px">
+  <a href="https://www.starlink.com/" target="_blank" title="Better than nothing beta">
+    <img src="starlink.svg" style="height:50px" alt="Better than nothing beta">
   </a>
 
-  <a href="https://github.com/dbjohnson/starlink-monitor" target="_blank">
-    <img src="github.svg" alt="Fork me on github" style="height:50px">
+  <a href="http://192.168.100.1/statistics" target="_blank" title="Starlink stats page">
+    <img src="stats.svg" style="height:50px" alt="Starlink stats page">
+  </a>
+
+  <a href="https://github.com/dbjohnson/starlink-monitor" target="_blank" title="Fork me on github">
+    <img src="github.svg" style="height:50px" alt="Fork me on github">
   </a>
 
   <div style="float:right">
-    <label for="history">History:</label>
-    <select id="history" onchange="startBroadcast()">
-      <option value="900">15 mins</option>
-      <option value="3600">1 hour</option>
-      <option value="10800">3 hours</option>
-      <option value="21600">6 hours</option>
-      <option value="43200">12 hours</option>
-      <option value="86400">24 hours</option>
-      <option value="20000000">All</option>
-    </select>
-    <div id="lastupdate" style="margin-top:5px">Waiting...</div>
+    <div style="float:right">
+      <label for="history">History:</label>
+      <select id="history" onchange="startBroadcast()">
+        <option value="900">15 mins</option>
+        <option value="3600">1 hour</option>
+        <option value="10800">3 hours</option>
+        <option value="21600">6 hours</option>
+        <option value="43200">12 hours</option>
+        <option value="86400">24 hours</option>
+        <option value="20000000">All</option>
+      </select>
+    </div>
+    <br>
+    <div style="float:right">
+      <div id="lastupdate" style="margin-top:5px">Waiting...</div>
+    </div>
   </div>
 </body>
 
