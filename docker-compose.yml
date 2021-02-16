@@ -5,4 +5,6 @@ services:
     ports:
       - 3000:80
     restart: always
+    volumes:
+      - ./:/usr/src/app
     command: python3 -m app.app

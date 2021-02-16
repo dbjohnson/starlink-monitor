@@ -12,10 +12,16 @@
     body {
       background-image: url('background.jpg');
       background-position: center 0;
-      background-color: #00000099;
-      color: #ffffff;
+    }
+
+    button {
+      background-color: #ffffff11;
+      color: #ffffff99;
       font-family: arial;
-      font-size: 14pt;
+      font-size: 10pt;
+      border: none;
+      border-radius: 5px;
+      padding: 5px;
     }
 
     .grid-container {
@@ -77,6 +83,7 @@
     </div>
     <div>
       <div id="speedtests"></div>
+      <button style="margin-left:40%" onclick="triggerSpeedtest()">Run now</button>
     </div>
     <div>
       <div id="snr"></div>

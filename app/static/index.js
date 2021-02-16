@@ -347,3 +347,7 @@ const renderObstructionMap = (data) => {
 
   Plotly.newPlot('obstructions', pdata, lout, config)
 }
+
+const triggerSpeedtest = () => {
+  fetch('/api/trigger_speedtest')
+}
