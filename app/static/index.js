@@ -339,8 +339,8 @@ const renderObstructionMap = (data) => {
           size: 12
         },
         angle: 45,
-        visible: true,
-        nticks: 7,
+        visible: false,
+        nticks: 1,
         range: [0, maxseen.reduce((l, r) => Math.max(l, r), 0.03)],
         fixedrange: true,
       },
@@ -362,7 +362,7 @@ const renderObstructionMap = (data) => {
       }
     },
     autoscale: true,
-    margin: { pad: 0, l: 0, r: 0, t: 50, b: 20, autoexpand: true },
+    margin: { pad: 0, l: 20, r: 20, t: 50, b: 20, autoexpand: true },
     showlegend: true
   }
 
