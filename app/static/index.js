@@ -63,7 +63,7 @@ const layout = (title, showlegend = false) => {
 if (document.documentURI.indexOf('github.io') >= 0) {
   // load data from s3 for github pages
   fetch(
-    '/resources/exampledata.json'
+    document.documentURI.replace('app/static/', 'resources/exampledata.json')
   )
     .then(response => response.json())
     .then(data => {
@@ -75,7 +75,6 @@ if (document.documentURI.indexOf('github.io') >= 0) {
     document.getElementById('historyselect').style.visibility = 'hidden'
   })
 } else {
-  // use sockets for live connection to server
   const socket = io.connect()
 
   socket.on('connect', function () {
