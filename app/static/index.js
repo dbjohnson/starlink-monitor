@@ -1,4 +1,5 @@
 const d3colors = [
+
   '#1F77B4',
   '#FF7F0E',
   '#2CA02C',
@@ -59,25 +60,25 @@ const layout = (title, showlegend = false) => {
   }
 }
 
+const socket = io.connect()
 
-const refresh = () => {
+socket.on('connect', function() {
+  startBroadcast()
+})
+
+socket.on('message', function(data) {
+  render(data)
+})
+
+const startBroadcast = () => {
   const history = document.getElementById('history')
-  const secs = history ? history.value : 600
-  fetch(`/api/data?secs=${secs}`)
-    .then(response => response.json())
-    .then(data => {
-      setTimeout(refresh, 1000)
-      try {
-        render(data)
-      } catch (e) {
-        console.log(e)
-        console.log(data)
-      }
-    })
+  const secs = history ? parseInt(history.value) : 600
+  socket.emit('start_broadcast', { secs_history: secs })
 }
 
 
 const render = (data) => {
+  document.getElementById('lastupdate').innerHTML = "Last updated: " + (new Date()).toLocaleTimeString()
   renderPing(data)
   renderPingDrop(data)
   renderSNR(data)
@@ -346,6 +347,3 @@ const renderObstructionMap = (data) => {
 
   Plotly.newPlot('obstructions', pdata, lout, config)
 }
-
-
-refresh()

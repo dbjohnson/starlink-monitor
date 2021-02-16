@@ -19,12 +19,13 @@ from tinysched import scheduler
 print('data.py automatically runs status update checks in the background')
 
 
-SUBSCRIBERS = []
+BROADCAST_RATE_SECS = int(os.getenv('BROADCAST_RATE_SECS', 3))
 STARLINK_REFRESH_SECS = int(os.getenv('STARLINK_REFRESH_SECS', 1))
 STARLINK_HISTORY_REFRESH_SECS = int(os.getenv('STARLINK_HISTORY_REFRESH_SECS', 30))
 SPEEDTEST_REFRESH_MINS = int(os.getenv('SPEEDTEST_REFRESH_MINS', 30))
 BUFFER_SIZE_HOURS = int(os.getenv('BUFFER_SIZE_HOURS', 72))
 BUFFER_SIZE_SECS = BUFFER_SIZE_HOURS * 3600
+BROADCAST_LOOPS = []
 DATA = {
     'starlink_status': defaultdict(list),
     'starlink_history': defaultdict(list),
@@ -32,7 +33,7 @@ DATA = {
 }
 
 
-def latest(history_secs=600, max_data_points=1000):
+def latest(history_secs=600, max_data_points=200):
     """
     Retrieve latest data, with sampling to indicated
     number of data points
@@ -152,6 +153,28 @@ def _sample_buffer(b, max_data_points):
         k: smooth(k, v)
         for k, v in b.items()
     }
+
+
+def broadcast(socketio, secs_history, update_rate=BROADCAST_RATE_SECS):
+    """
+    Broadcast updates via socketui
+    """
+    # cancel existing schedulers
+    for cancel_fn in BROADCAST_LOOPS:
+        cancel_fn()
+
+    BROADCAST_LOOPS.clear()
+
+    # start new scheduler
+    def broadcast():
+        socketio.send(latest(secs_history))
+
+    BROADCAST_LOOPS.append(
+        scheduler.repeat(
+            broadcast,
+            interval=datetime.timedelta(seconds=update_rate)
+        )
+    )
 
 
 scheduler.repeat(

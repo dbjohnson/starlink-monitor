@@ -21,6 +21,7 @@ View at [http://localhost:3000](http://localhost:3000)
 | `STARLINK_URI`                  | URI for starlink router                  | `192.168.100.1:9200` |
 | `STARLINK_REFRESH_SECS`         | seconds between dishy status checks      | `1`                  |
 | `STARLINK_HISTORY_REFRESH_SECS` | seconds between dishy 12hr history pulls | `30`                 |
+| `BROADCAST_RATE_SECS`           | seconds between page refreshes           | `3`                  |
 | `SPEEDTEST_REFRESH_MINS`        | minutes between speedtests               | `30`                 |
 | `BUFFER_SIZE_HOURS`             | number of hours of history (in memory!)  | `72`                 |
 

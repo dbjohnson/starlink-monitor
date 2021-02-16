@@ -6,13 +6,16 @@
   <title>Starlink</title>
   <link rel="icon" type="image/x-icon" id="favicon" href="favicon.ico" />
   <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  <script src="https://cdn.socket.io/3.1.1/socket.io.min.js"></script>
   <script src="index.js"></script>
   <style>
     body {
       background-image: url('background.jpg');
       background-position: center 0;
+      background-color: #00000099;
       color: #ffffff;
       font-family: arial;
+      font-size: 14pt;
     }
 
     .grid-container {
@@ -29,9 +32,11 @@
       margin: 30px
     }
 
-    .selector {
-      margin: auto;
-      width: 200px;
+    select {
+      background-color: #00000099;
+      color: #ffffff;
+      font-family: arial;
+      font-size: 14pt;
     }
 
     .obst {
@@ -49,13 +54,10 @@
       .grid-container {
         grid-template-columns: 100%;
       }
-
-      .selector {
+      body {
         font-size: 24pt;
-        width: 500px;
       }
-
-      .selector>select {
+      select {
         font-size: 24pt;
       }
     }
@@ -83,18 +85,23 @@
       <div id="downtime"></div>
     </div>
   </div>
+
   <div>
     <div class="obst" id="obstructions"></div>
   </div>
+
   <a href="https://www.starlink.com/" target="_blank">
     <img src="starlink.svg" alt="Better than nothing beta" style="height:50px">
   </a>
+
   <a href="https://github.com/dbjohnson/starlink-monitor" target="_blank">
     <img src="github.svg" alt="Fork me on github" style="height:50px">
   </a>
-  <div class="selector">
+
+  <div style="float:right">
+    <div id="lastupdate">Waiting...</div>
     <label for="history">History:</label>
-    <select id="history" style="background-color:#00000099;color:white">
+    <select id="history" onchange="startBroadcast()">
       <option value="600">10 minutes</option>
       <option value="3600">1 hour</option>
       <option value="10800">3 hours</option>
