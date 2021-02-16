@@ -42,5 +42,8 @@ docker-compose build && docker-compose up -d
 | `SPEEDTEST_REFRESH_MINS`        | minutes between speedtests               | 30                 |
 | `BUFFER_SIZE_HOURS`             | number of hours of history (in memory!)  | 72                 |
 
+## Github pages
+[static page with example data](https://dbjohnson.github.io/starlink-monitor/app/static/)
+
 ## Screenshot
 ![](https://github.com/dbjohnson/starlink-monitor/blob/main/resources/screenshot.png?raw=true)
