@@ -370,4 +370,5 @@ const renderObstructionMap = (data) => {
 
 const triggerSpeedtest = () => {
   fetch('/api/trigger_speedtest')
+  window.alert('Speedtest initiated')
 }
