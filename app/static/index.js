@@ -63,7 +63,7 @@ const layout = (title, showlegend = false) => {
 if (document.documentURI.indexOf('github.io') >= 0) {
   // load data from s3 for github pages
   fetch(
-    document.documentURI.replace('app/static/', 'resources/exampledata.json')
+    document.documentURI.replace('app/static/', 'resources/sampledata.json')
   )
     .then(response => response.json())
     .then(data => {
