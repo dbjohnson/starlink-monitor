@@ -1,4 +1,4 @@
-name: CI to Docker hub 
+name: push to dockerhub
 on:
   push:
     branches: [ main ]
