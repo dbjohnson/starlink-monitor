@@ -34,7 +34,7 @@ const layout = (title, showlegend = false) => {
     },
     yaxis: {
       showline: false,
-      showgrid: false,
+      gridcolor: '#ffffff30',
       hoverformat: '.1f',
       fixedrange: true
     },
