@@ -2,7 +2,10 @@ name: CI to Docker hub
 on:
   push:
     branches: [ master ]
-  steps:
+jobs:
+  push:
+    runs-on: ubuntu-latest     
+    steps:
       -
         name: Login to DockerHub
         uses: docker/login-action@v1 
