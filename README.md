@@ -42,4 +42,4 @@ docker-compose build && docker-compose up -d
 
 
 ## Screenshot
-![](![](https://github.com/dbjohnson/starlink-monitor/blob/main/resources/screenshot.png?raw=true))
+![](https://github.com/dbjohnson/starlink-monitor/blob/main/resources/screenshot.png?raw=true)
