@@ -118,7 +118,7 @@ const renderSNR = (data) => {
     // invert the data so we can plot the bars as coming down from the top of
     // the graph - i.e., SNR 9 => y = 0 (short bar)
     // 0.5 just is to give the line some thickness at SNR = 9
-    y: y.map(y => (9 - y) || 0.5),
+    y: y.map(y => (9 - y) || 0.),
     text: y.map(y => y.toFixed(1)),
     type: 'bar',
     name: 'SNR',

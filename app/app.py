@@ -1,6 +1,7 @@
 from flask import Flask
 from flask import request
 from flask import jsonify
+from flask import redirect
 from flask_socketio import SocketIO
 
 from . import data
@@ -22,7 +23,7 @@ def _speedtest():
 
 @app.route('/')
 def _root():
-    return app.send_static_file('index.html')
+    return redirect('/index.html')
 
 
 @app.route('/<string:path>')
