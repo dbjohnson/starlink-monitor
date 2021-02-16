@@ -78,7 +78,7 @@ const startBroadcast = () => {
 
 
 const render = (data) => {
-  document.getElementById('lastupdate').innerHTML = "Last updated: " + (new Date()).toLocaleTimeString()
+  document.getElementById('lastupdate').innerHTML = "Updated: " + (new Date()).toLocaleTimeString()
   renderPing(data)
   renderPingDrop(data)
   renderSNR(data)
