@@ -82,7 +82,7 @@ def _starlink_history_merged():
 
 def _update_starlink_history():
     latest = starlink.history()
-    if len(DATA['starlink_history']):
+    if len(DATA['starlink_history'].get('timestamp', [])):
         # merge data
         maxidx = DATA['starlink_history']['index'][-1]
         for i, idx in enumerate(latest['index']):
