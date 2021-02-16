@@ -60,10 +60,10 @@ const layout = (title, showlegend = false) => {
   }
 }
 
-if (document.documentURI === 'https://dbjohnson.github.io/starlink-monitor/app/static/') {
+if (document.documentURI.indexOf('github.io') >= 0) {
   // load data from s3 for github pages
   fetch(
-    'https://github.com/dbjohnson/starlink-monitor/raw/main/resources/exampledata.json'
+    '/resources/exampledata.json'
   )
     .then(response => response.json())
     .then(data => {
@@ -75,6 +75,7 @@ if (document.documentURI === 'https://dbjohnson.github.io/starlink-monitor/app/s
     document.getElementById('historyselect').style.visibility = 'hidden'
   })
 } else {
+  // use sockets for live connection to server
   const socket = io.connect()
 
   socket.on('connect', function () {
