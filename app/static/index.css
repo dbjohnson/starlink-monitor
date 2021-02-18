@@ -50,6 +50,7 @@ select {
   width: 100%;
 }
 
+/* single column view for small screens */
 @media screen and (max-width: 1000px) {
   .grid-container {
     grid-template-columns: 100%;
