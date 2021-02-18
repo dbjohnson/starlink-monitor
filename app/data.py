@@ -33,7 +33,7 @@ DATA = {
 }
 
 
-def latest(history_secs=600, max_data_points=200):
+def latest(history_secs=600, max_data_points=1000):
     """
     Retrieve latest data, with sampling to indicated
     number of data points
