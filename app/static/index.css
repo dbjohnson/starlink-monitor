@@ -52,15 +52,15 @@ select {
 
 @media screen and (max-width: 1000px) {
   .grid-container {
-  grid-template-columns: 100%;
+    grid-template-columns: 100%;
   }
 
   body {
-  font-size: 24pt;
+    font-size: 24pt;
   }
 
   select {
-  font-size: 24pt;
+    font-size: 24pt;
   }
 }
 
