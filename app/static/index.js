@@ -20,7 +20,7 @@ const layout = (title, showlegend = false) => {
   return {
     font: {
       color: 'white',
-      size: document.body.clientWidth < 1000 ? 18 : 12
+      size: document.body.clientWidth < 1000 ? 24 : 12
     },
     paper_bgcolor: '#fff0',
     plot_bgcolor: '#fff0',
@@ -46,7 +46,7 @@ const layout = (title, showlegend = false) => {
       bgcolor: '#fff0',
     },
     autoscale: true,
-    margin: { pad: 10, l: 50, r: 10, t: 40, b: 40, autoexpand: true },
+    margin: { pad: 0, l: 50, r: 10, t: 40, b: 40, autoexpand: true },
     barmode: 'grouped',
     title: {
       text: title,
@@ -54,7 +54,7 @@ const layout = (title, showlegend = false) => {
       xanchor: 'left',
       position: 'left',
       font: {
-        size: 18
+        size: document.body.clientWidth < 1000 ? 24 : 18
       }
     }
   }

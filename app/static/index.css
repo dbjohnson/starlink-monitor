@@ -50,21 +50,6 @@ select {
   width: 100%;
 }
 
-/* single column view for small screens */
-@media screen and (max-width: 1000px) {
-  .grid-container {
-    grid-template-columns: 100%;
-  }
-
-  body {
-    font-size: 24pt;
-  }
-
-  select {
-    font-size: 24pt;
-  }
-}
-
 .modal {
   display: block;
   opacity: 0;
@@ -82,4 +67,26 @@ select {
   background-color: rgba(0,0,0,0.3);
   padding: 10px;
   border: 1px solid #888;
+}
+
+/* single column view for small screens */
+@media screen and (max-width: 1000px) {
+  .grid-container {
+    grid-template-columns: 100%;
+  }
+
+  body {
+    font-size: 24pt;
+  }
+
+  select {
+    font-size: 24pt;
+  }
+  .modal {
+    width: 300px;
+    height: 50px;
+    line-height: 50px;
+    padding: 10px;
+    border: 1px solid #888;
+  }
 }
