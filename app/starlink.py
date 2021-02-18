@@ -1,5 +1,7 @@
 """
 Use grpcurl to pull stats from the starlink router
+
+grpcurl -plaintext 192.168.100.1:9200 describe SpaceX.API.Device.Request
 """
 import os
 import subprocess

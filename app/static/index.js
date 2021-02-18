@@ -246,6 +246,7 @@ const renderDowntime = (data) => {
 const renderSpeedTest = (data) => {
   if (data.speedtest.timestamp) {
     const hover = data.speedtest.timestamp.map((s, i) => [
+      `date: ${(new Date(s * 1000)).toLocaleString()}`,
       `ISP: ${data.speedtest.client[i].isp}`,
       `host: ${data.speedtest.server[i].sponsor} (${data.speedtest.server[i].name})`,
       `ping: ${data.speedtest.ping[i].toFixed(1)} ms`,
@@ -259,6 +260,12 @@ const renderSpeedTest = (data) => {
       y: data.speedtest.download.map(d => d / 1e6),
       text: hover,
       hoverinfo: 'text',
+      hoverlabel: {
+        align: 'left',
+        bgcolor: '#000',
+        bordercolor: '#000',
+        font: { color: 'white' }
+      },
       type: 'bar',
       name: 'download',
       marker: {
@@ -389,5 +396,17 @@ const renderObstructionMap = (data) => {
 
 const triggerSpeedtest = () => {
   fetch('/api/trigger_speedtest')
-  window.alert('Speedtest initiated')
+
+  // show alert, then fade out
+  const modal = document.getElementById('speedtestmodal')
+  modal.style.opacity = 1
+  const fade = () => {
+    modal.style.opacity *= 0.9
+    if (modal.style.opacity < 0.2) {
+      modal.style.opacity = 0
+    } else {
+      setTimeout(fade, 30)
+    }
+  }
+  setTimeout(fade, 2000)
 }

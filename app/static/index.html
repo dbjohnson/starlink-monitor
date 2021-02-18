@@ -7,77 +7,18 @@
   <link rel="icon" type="image/x-icon" id="favicon" href="favicon.ico" />
   <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
   <script src="https://cdn.socket.io/3.1.1/socket.io.min.js"></script>
+  <link rel="stylesheet" href="index.css" />
   <script src="index.js"></script>
-  <style>
-    body {
-      background-image: url('background.jpg');
-      background-position: center 0;
-      background-color: #00000000;
-      color: #ffffff;
-      font-family: arial;
-      font-size: 14pt;
-    }
-
-    button {
-      background-color: #ffffff11;
-      color: #ffffff99;
-      font-family: arial;
-      font-size: 10pt;
-      border: none;
-      border-radius: 5px;
-      padding: 5px;
-    }
-
-    .grid-container {
-      display: grid;
-      grid-template-columns: 50% 50%;
-      justify-content: center;
-      grid-row-gap: 20px;
-      grid-column-gap: 20px;
-    }
-
-    .grid-container>div {
-      height: 200px;
-      width: 90%;
-      margin: 30px
-    }
-
-    select {
-      background-color: #00000000;
-      color: #ffffff;
-      font-family: arial;
-      font-size: 14pt;
-      border: none;
-    }
-
-    .obst {
-      margin: auto;
-      height: 400px;
-      width: 400px;
-    }
-
-    .grid-container>div>div {
-      height: 100%;
-      width: 100%;
-    }
-
-    @media screen and (max-width: 1000px) {
-      .grid-container {
-        grid-template-columns: 100%;
-      }
-
-      body {
-        font-size: 24pt;
-      }
-
-      select {
-        font-size: 24pt;
-      }
-    }
-  </style>
 </head>
 
 <body>
+
+
+
+  <div id="speedtestmodal" class="modal">
+    Speedtest initiated...
+  </div>
+
   <div class="grid-container">
     <div>
       <div id="ping"></div>

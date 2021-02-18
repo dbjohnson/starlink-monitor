@@ -1,0 +1,84 @@
+body {
+  background-image: url('background.jpg');
+  background-position: center 0;
+  background-color: #00000000;
+  color: #ffffff;
+  font-family: arial;
+  font-size: 14pt;
+}
+
+button {
+  background-color: #ffffff11;
+  color: #ffffff99;
+  font-family: arial;
+  font-size: 10pt;
+  border: none;
+  border-radius: 5px;
+  padding: 5px;
+}
+
+.grid-container {
+  display: grid;
+  grid-template-columns: 50% 50%;
+  justify-content: center;
+  grid-row-gap: 20px;
+  grid-column-gap: 20px;
+}
+
+.grid-container>div {
+  height: 200px;
+  width: 90%;
+  margin: 30px
+}
+
+select {
+  background-color: #00000000;
+  color: #ffffff;
+  font-family: arial;
+  font-size: 14pt;
+  border: none;
+}
+
+.obst {
+  margin: auto;
+  height: 400px;
+  width: 400px;
+}
+
+.grid-container>div>div {
+  height: 100%;
+  width: 100%;
+}
+
+@media screen and (max-width: 1000px) {
+  .grid-container {
+  grid-template-columns: 100%;
+  }
+
+  body {
+  font-size: 24pt;
+  }
+
+  select {
+  font-size: 24pt;
+  }
+}
+
+.modal {
+  display: block;
+  opacity: 0;
+  position: fixed;
+  z-index: 1;
+  padding-top: 10px;
+  right: 10px;
+  top: 10px;
+  width: 200px;
+  height: 30px;
+  overflow: none;
+  border-radius: 5px;
+  margin: auto;
+  line-height: 30px;
+  background-color: rgba(0,0,0,0.3);
+  padding: 10px;
+  border: 1px solid #888;
+}
