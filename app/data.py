@@ -37,17 +37,21 @@ def latest(history_secs=600, max_data_points=200):
     """
     Retrieve latest data, with sampling to indicated
     number of data points
+
+    NOTE: all speedtests are always returned
     """
     return {
-        k: _sample_buffer(
-            _trim_buffer(v, history_secs),
-            max_data_points
-        )
-        for k, v in {
-            'starlink': _starlink_history_merged(),
-            'status': DATA['starlink_status'],
-            'speedtest': DATA['speedtest'],
-        }.items()
+        'speedtest': DATA['speedtest'],
+        ** {
+            k: _sample_buffer(
+                _trim_buffer(v, history_secs),
+                max_data_points
+            )
+            for k, v in {
+                'starlink': _starlink_history_merged(),
+                'status': DATA['starlink_status'],
+            }.items()
+        }
     }
 
 
