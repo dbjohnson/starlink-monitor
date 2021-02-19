@@ -128,12 +128,8 @@ const renderSNR = (data) => {
   const y = data.starlink.snr
   const pdata = [{
     x: x,
-    y: y,
-    x: x,
-    // invert the data so we can plot the bars as coming down from the top of
-    // the graph - i.e., SNR 9 => y = 0 (short bar)
-    // 0.5 just is to give the line some thickness at SNR = 9
-    y: y.map(y => (9 - y) || 0.),
+    y: y.map(y => 9 - y),
+    base: y,
     text: y.map(y => y.toFixed(1)),
     type: 'bar',
     name: 'SNR',
@@ -148,12 +144,10 @@ const renderSNR = (data) => {
   }]
 
   const lout = layout('SNR')
-  // invert the range so 0 is at the top of the chart
-  lout.yaxis.range = [9, 0]
-  // reverse tick labels to match inverted range
+  lout.yaxis.range = [0, 9]
   lout.yaxis.tickmode = 'array'
   lout.yaxis.tickvals = [0, 3, 6, 9]
-  lout.yaxis.ticktext = [9, 6, 3, 0]
+  lout.yaxis.ticktext = [0, 3, 6, 9]
 
   Plotly.newPlot('snr', pdata, lout, config);
 }
@@ -188,7 +182,8 @@ const renderThroughput = (data) => {
   const pdata = [{
     x: x,
     y: y1,
-    type: 'bar',
+    type: 'scatter',
+    fill: 'tozeroy',
     name: 'download',
     hovertemplate: '%{y:.1f} Mbps',
     marker: {
@@ -197,7 +192,8 @@ const renderThroughput = (data) => {
   }, {
     x: x,
     y: y2,
-    type: 'bar',
+    type: 'scatter',
+    fill: 'tozeroy',
     name: 'upload',
     hovertemplate: '%{y:.1f} Mbps',
     marker: {
@@ -266,7 +262,8 @@ const renderSpeedTest = (data) => {
         bordercolor: '#000',
         font: { color: 'white' }
       },
-      type: 'bar',
+      type: 'scatter',
+      fill: 'tozeroy',
       name: 'download',
       marker: {
         color: d3colors[0]
@@ -275,7 +272,8 @@ const renderSpeedTest = (data) => {
       x: x,
       y: data.speedtest.upload.map(u => u / 1e6),
       hoverinfo: 'skip',
-      type: 'bar',
+      type: 'scatter',
+      fill: 'tozeroy',
       name: 'upload',
       marker: {
         color: d3colors[1],
