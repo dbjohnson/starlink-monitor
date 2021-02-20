@@ -12,10 +12,9 @@ ENV BUFFER_SIZE_HOURS=72
 WORKDIR /usr/local/bin
 RUN apt-get update && apt-get install -y curl git
 # install from source, since we have to do it for arm, anyway - requires golang
-RUN apt-get update && apt-get install -y golang
+RUN apk add --no-cache git make musl-dev go
 RUN go get github.com/fullstorydev/grpcurl/... && go install github.com/fullstorydev/grpcurl/cmd/grpcurl
 RUN rm -rf $HOME/go
-RUN apt-get -y remove golang
 
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
