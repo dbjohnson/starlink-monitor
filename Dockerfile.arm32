@@ -1,0 +1,24 @@
+FROM arm32v7/python:3.9.1-buster
+
+ENV PYTHONPATH=.
+ENV STARLINK_URI=192.168.100.1:9200
+ENV STARLINK_REFRESH_SECS=1
+ENV STARLINK_HISTORY_REFRESH_SECS=30
+ENV BROADCAST_RATE_SECS=3
+ENV SPEEDTEST_REFRESH_MINS=30
+ENV BUFFER_SIZE_HOURS=72
+
+# install grpcurl
+WORKDIR /usr/local/bin
+# install from source, since we have to do it for arm, anyway - requires golang
+RUN apt-get update && apt-get install -y golang
+RUN go get github.com/fullstorydev/grpcurl/... && go install github.com/fullstorydev/grpcurl/cmd/grpcurl
+
+RUN mkdir -p /usr/src/app
+WORKDIR /usr/src/app
+# install requirements, copy over the app
+COPY requirements.txt /usr/src/app/requirements.txt
+RUN pip install -r /usr/src/app/requirements.txt
+COPY . /usr/src/app/
+
+CMD python3 -m app.app
