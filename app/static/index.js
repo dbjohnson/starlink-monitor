@@ -16,7 +16,7 @@ const config = {
   dragmode: false
 }
 
-const layout = (title, showlegend = false) => {
+const layout = (title, showlegend = false, ymax = null) => {
   return {
     font: {
       color: 'white',
@@ -36,7 +36,8 @@ const layout = (title, showlegend = false) => {
       showline: false,
       gridcolor: '#ffffff30',
       hoverformat: '.1f',
-      fixedrange: true
+      fixedrange: true,
+      range: [0, ymax]
     },
     showlegend: showlegend,
     legend: {
@@ -119,7 +120,16 @@ const renderPing = (data) => {
       cmax: 120,
     }
   }]
-  Plotly.newPlot('ping', pdata, layout('Ping (ms)'), config);
+  Plotly.newPlot(
+    'ping',
+    pdata,
+    layout(
+      'Ping (ms)',
+      false,
+      updateYmax('ping', data.starlink.popPingLatencyMs)
+    ),
+    config
+  );
 }
 
 
@@ -169,9 +179,17 @@ const renderPingDrop = (data) => {
       cmax: 0,
     }
   }]
-  const lout = layout('Ping drop (%)')
 
-  Plotly.newPlot('pingdrop', pdata, lout, config);
+  Plotly.newPlot(
+    'pingdrop',
+    pdata,
+    layout(
+      'Ping drop (%)',
+      false,
+      updateYmax('pingdrop', y)
+    ),
+    config
+  )
 }
 
 
@@ -201,7 +219,16 @@ const renderThroughput = (data) => {
     }
   }]
 
-  Plotly.newPlot('throughput', pdata, layout('Throughput (Mbps)', true), config);
+  Plotly.newPlot(
+    'throughput',
+    pdata,
+    layout(
+      'Throughput (Mbps)',
+      true,
+      updateYmax('throughput', y1.concat(y2)),
+    ),
+    config
+  )
 }
 
 
@@ -283,7 +310,11 @@ const renderSpeedTest = (data) => {
         color: d3colors[1],
       }
     }]
-    const lout = layout('Speedtests (Mbps)', true)
+    const lout = layout(
+      'Speedtests (Mbps)',
+      true,
+      updateYmax('speedtests', pdata[0].y.concat(pdata[1].y))
+    )
     lout.hovermode = 'text'
     Plotly.newPlot('speedtests', pdata, lout, config);
   } else {
@@ -411,4 +442,21 @@ const triggerSpeedtest = () => {
     }
   }
   setTimeout(fade, 2000)
+}
+
+// keep track of y max values for charts with dynamic ranges so that we
+// don't bump the y axis limits with every refresh - use the max value observed
+// in the last 100 refreshes
+const yMaxHistLength = 10
+const yMaxHist = {
+  ping: [],
+  pingdrop: [],
+  throughput: [],
+  speedtests: []
+}
+
+const updateYmax = (chart, yVals) => {
+  yMaxHist[chart].unshift(Math.max(...yVals))
+  yMaxHist[chart] = yMaxHist[chart].slice(0, yMaxHistLength)
+  return Math.max(...yMaxHist[chart])
 }
