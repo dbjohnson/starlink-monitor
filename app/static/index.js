@@ -207,7 +207,11 @@ const renderThroughput = (data) => {
 
 const renderDowntime = (data) => {
   const x = data.starlink.timestamp.map(ts => new Date(ts * 1000))
-  const planned = data.starlink.scheduled.map(v => v === null ? true : v).map(v => !v ? 1 : 0)
+  const planned = data.starlink.scheduled
+    // fill missing data assuming service was planned
+    .map(planned => planned === null ? true : planned)
+    // raise flag when service is not planned (beta downtime)
+    .map(planned => planned ? 0 : 1)
   const obstructed = data.starlink.obstructed.map(v => v ? 1 : 0)
 
   const pdata = [{
