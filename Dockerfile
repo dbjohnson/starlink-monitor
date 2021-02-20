@@ -1,7 +1,5 @@
 FROM python:3.9.1-buster
 
-ARG ARM
-
 ENV PYTHONPATH=.
 ENV STARLINK_URI=192.168.100.1:9200
 ENV STARLINK_REFRESH_SECS=1
@@ -12,9 +10,7 @@ ENV BUFFER_SIZE_HOURS=72
 
 # install grpcurl
 WORKDIR /usr/local/bin
-# install from source, since we have to do it for arm, anyway - requires golang
-RUN apt-get update && apt-get install -y golang
-RUN go get github.com/fullstorydev/grpcurl/... && go install github.com/fullstorydev/grpcurl/cmd/grpcurl
+RUN cd /usr/local/bin && curl -L https://github.com/fullstorydev/grpcurl/releases/download/v1.8.0/grpcurl_1.8.0_linux_x86_64.tar.gz | tar xzv
 
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
