@@ -1,4 +1,4 @@
-FROM arm32v7/python:3.9.1-buster
+FROM arm32v7/python:3.9.1-slim-buster
 
 ENV PYTHONPATH=.
 ENV STARLINK_URI=192.168.100.1:9200
@@ -10,6 +10,7 @@ ENV BUFFER_SIZE_HOURS=72
 
 # install grpcurl
 WORKDIR /usr/local/bin
+RUN apt-get update && apt-get install -y curl
 # install from source, since we have to do it for arm, anyway - requires golang
 RUN apt-get update && apt-get install -y golang
 RUN go get github.com/fullstorydev/grpcurl/... && go install github.com/fullstorydev/grpcurl/cmd/grpcurl

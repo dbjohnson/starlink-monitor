@@ -1,4 +1,4 @@
-FROM python:3.9.1-buster
+FROM python:3.9.1-slim-buster
 
 ENV PYTHONPATH=.
 ENV STARLINK_URI=192.168.100.1:9200
@@ -10,6 +10,7 @@ ENV BUFFER_SIZE_HOURS=72
 
 # install grpcurl
 WORKDIR /usr/local/bin
+RUN apt-get update && apt-get install -y curl
 RUN cd /usr/local/bin && curl -L https://github.com/fullstorydev/grpcurl/releases/download/v1.8.0/grpcurl_1.8.0_linux_x86_64.tar.gz | tar xzv
 
 RUN mkdir -p /usr/src/app
