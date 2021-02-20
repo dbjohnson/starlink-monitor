@@ -14,7 +14,7 @@ WORKDIR /usr/local/bin
 RUN apt-get update && apt-get install -y golang
 RUN go get github.com/fullstorydev/grpcurl/... && go install github.com/fullstorydev/grpcurl/cmd/grpcurl
 RUN rm -rf $HOME/go
-RUN apt-get remove golang
+RUN apt-get -y remove golang
 
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
