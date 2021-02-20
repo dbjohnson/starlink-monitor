@@ -1,4 +1,4 @@
-FROM arm32v7/python:3.9.1-slim-buster
+FROM arm32v6/python:3.9.2-alpine
 
 ENV PYTHONPATH=.
 ENV STARLINK_URI=192.168.100.1:9200
