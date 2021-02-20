@@ -1,4 +1,4 @@
-FROM arm32v6/python:3.9.2-alpine
+FROM arm32v5/python:3.9.2-alpine
 
 ENV PYTHONPATH=.
 ENV STARLINK_URI=192.168.100.1:9200
@@ -10,8 +10,8 @@ ENV BUFFER_SIZE_HOURS=72
 
 # install grpcurl
 WORKDIR /usr/local/bin
-# install from source, since we have to do it for arm, anyway - requires golang
-RUN apk add --no-cache git make musl-dev go
+# install from source - requires golang
+RUN apt-get update && apt-get install -y curl git golang
 RUN go get github.com/fullstorydev/grpcurl/... && go install github.com/fullstorydev/grpcurl/cmd/grpcurl
 RUN rm -rf $HOME/go
 
