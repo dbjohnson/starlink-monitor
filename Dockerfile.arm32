@@ -10,7 +10,7 @@ ENV BUFFER_SIZE_HOURS=72
 
 # install grpcurl
 WORKDIR /usr/local/bin
-RUN apt-get update && apt-get install -y curl
+RUN apt-get update && apt-get install -y curl, git
 # install from source, since we have to do it for arm, anyway - requires golang
 RUN apt-get update && apt-get install -y golang
 RUN go get github.com/fullstorydev/grpcurl/... && go install github.com/fullstorydev/grpcurl/cmd/grpcurl
