@@ -33,7 +33,7 @@ jobs:
           push: true
           tags: dbryanjohnson/starlink-monitor:arm32v6
           platforms: linux/arm/v6
-
+      -
         name: ARM 32 v7 build
         id: docker_build_arm32v7
         uses: docker/build-push-action@v2
