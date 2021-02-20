@@ -31,8 +31,8 @@ jobs:
           context: ./
           file: ./Dockerfile.arm32
           push: true
-          tags: dbryanjohnson/starlink-monitor:arm32
-          platforms: linux/arm32
+          tags: dbryanjohnson/starlink-monitor:arm
+          platforms: linux/arm
       # end: for ARM build only
       -
         name: Build and push
