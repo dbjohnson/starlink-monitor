@@ -40,3 +40,4 @@ jobs:
           file: ./Dockerfile.arm32
           push: true
           tags: dbryanjohnson/starlink-monitor:arm32
+          platforms: linux/arm32
