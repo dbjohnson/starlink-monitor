@@ -13,6 +13,9 @@ WORKDIR /usr/local/bin
 # install from source - requires golang
 RUN apt-get update && apt-get install -y --no-install-recommends curl git golang
 RUN go get github.com/fullstorydev/grpcurl/... && go install github.com/fullstorydev/grpcurl/cmd/grpcurl
+RUN mv /root/go/bin/grpcurl /usr/bin/
+# cleanup after install - dozens of MBs in here
+RUN rm -rf /root/go
 
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
