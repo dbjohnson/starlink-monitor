@@ -12,6 +12,7 @@ from math import ceil
 
 from . import speedtest
 from . import starlink
+from . import ip
 
 from tinysched import scheduler
 
@@ -41,6 +42,7 @@ def latest(history_secs=600, max_data_points=200):
     NOTE: all speedtests are always returned
     """
     return {
+        'ip_local': ip.local(),
         'speedtest': DATA['speedtest'],
         ** {
             k: _sample_buffer(
