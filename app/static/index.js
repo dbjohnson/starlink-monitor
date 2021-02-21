@@ -20,7 +20,7 @@ const layout = (title, showlegend = false, ymax = null) => {
   return {
     font: {
       color: 'white',
-      size: document.body.clientWidth < 1000 ? 24 : 12
+      size: singleColumnView() ? 24 : 12
     },
     paper_bgcolor: '#fff0',
     plot_bgcolor: '#fff0',
@@ -55,7 +55,7 @@ const layout = (title, showlegend = false, ymax = null) => {
       xanchor: 'left',
       position: 'left',
       font: {
-        size: document.body.clientWidth < 1000 ? 24 : 18
+        size: singleColumnView() ? 24 : 18
       }
     }
   }
@@ -96,17 +96,27 @@ const startBroadcast = () => {
 
 const render = (data) => {
   document.getElementById('lastupdate').innerHTML = 'Updated: ' + (new Date()).toLocaleTimeString()
-  renderPing(data)
-  renderPingDrop(data)
-  renderSNR(data)
-  renderThroughput(data)
-  renderDowntime(data)
+  // different layout for single vs 2 column views
+  if (singleColumnView()) {
+    renderThroughput(data, 'g1')
+    renderPing(data, 'g2')
+    renderPingDrop(data, 'g3')
+    renderSNR(data, 'g4')
+    renderDowntime(data, 'g5')
+    renderSpeedTest(data, 'g6')
+  } else {
+    renderPing(data, 'g1')
+    renderThroughput(data, 'g2')
+    renderPingDrop(data, 'g3')
+    renderSpeedTest(data, 'g4')
+    renderSNR(data, 'g5')
+    renderDowntime(data, 'g6')
+  }
   renderObstructionMap(data)
-  renderSpeedTest(data)
 }
 
 
-const renderPing = (data) => {
+const renderPing = (data, element) => {
   const pdata = [{
     x: data.starlink.timestamp.map(ts => new Date(ts * 1000)),
     y: data.starlink.popPingLatencyMs,
@@ -121,7 +131,7 @@ const renderPing = (data) => {
     }
   }]
   Plotly.newPlot(
-    'ping',
+    element,
     pdata,
     layout(
       'Ping (ms)',
@@ -133,7 +143,7 @@ const renderPing = (data) => {
 }
 
 
-const renderSNR = (data) => {
+const renderSNR = (data, element) => {
   const x = data.starlink.timestamp.map(ts => new Date(ts * 1000))
   const y = data.starlink.snr
   const pdata = [{
@@ -159,11 +169,11 @@ const renderSNR = (data) => {
   lout.yaxis.tickvals = [0, 3, 6, 9]
   lout.yaxis.ticktext = [0, 3, 6, 9]
 
-  Plotly.newPlot('snr', pdata, lout, config);
+  Plotly.newPlot(element, pdata, lout, config);
 }
 
 
-const renderPingDrop = (data) => {
+const renderPingDrop = (data, element) => {
   const x = data.starlink.timestamp.map(ts => new Date(ts * 1000))
   const y = data.starlink.popPingDropRate.map(v => v * 100)
   const pdata = [{
@@ -181,7 +191,7 @@ const renderPingDrop = (data) => {
   }]
 
   Plotly.newPlot(
-    'pingdrop',
+    element,
     pdata,
     layout(
       'Ping drop (%)',
@@ -193,7 +203,7 @@ const renderPingDrop = (data) => {
 }
 
 
-const renderThroughput = (data) => {
+const renderThroughput = (data, element) => {
   const x = data.starlink.timestamp.map(ts => new Date(ts * 1000))
   const y1 = data.starlink.downlinkThroughputBps.map(v => v / 1e6)
   const y2 = data.starlink.uplinkThroughputBps.map(v => v / 1e6)
@@ -220,11 +230,11 @@ const renderThroughput = (data) => {
   }]
 
   Plotly.newPlot(
-    'throughput',
+    element,
     pdata,
     layout(
       'Throughput (Mbps)',
-      true,
+      false,
       updateYmax('throughput', y1.concat(y2)),
     ),
     config
@@ -232,7 +242,7 @@ const renderThroughput = (data) => {
 }
 
 
-const renderDowntime = (data) => {
+const renderDowntime = (data, element) => {
   const x = data.starlink.timestamp.map(ts => new Date(ts * 1000))
   const planned = data.starlink.scheduled
     // fill missing data assuming service was planned
@@ -258,7 +268,7 @@ const renderDowntime = (data) => {
       color: d3colors[1]
     }
   }]
-  const lout = layout('Downtime', true)
+  const lout = layout('Downtime')
   lout.yaxis = {
     range: [0, 1],
     showline: false,
@@ -266,11 +276,11 @@ const renderDowntime = (data) => {
     fixedrange: true,
     tickvals: []
   }
-  Plotly.newPlot('downtime', pdata, lout, config);
+  Plotly.newPlot(element, pdata, lout, config);
 }
 
 
-const renderSpeedTest = (data) => {
+const renderSpeedTest = (data, element) => {
   if (data.speedtest.timestamp) {
     const hover = data.speedtest.timestamp.map((s, i) => [
       `date: ${(new Date(s * 1000)).toLocaleString()}`,
@@ -312,14 +322,14 @@ const renderSpeedTest = (data) => {
     }]
     const lout = layout(
       'Speedtests (Mbps)',
-      true,
+      false,
       updateYmax('speedtests', pdata[0].y.concat(pdata[1].y))
     )
     lout.hovermode = 'text'
-    Plotly.newPlot('speedtests', pdata, lout, config);
+    Plotly.newPlot(element, pdata, lout, config);
   } else {
     // gracefully handle startup before first result is ready
-    const lout = layout('Speedtests (Mbps)', true)
+    const lout = layout('Speedtests (Mbps)', false)
     lout.xaxis.zeroline = false
     lout.xaxis.tickmode = 'array'
     lout.xaxis.tickvals = []
@@ -334,8 +344,14 @@ const renderSpeedTest = (data) => {
       showarrow: false,
       text: 'Waiting...',
     }]
-    Plotly.newPlot('speedtests', [], lout, config);
+    Plotly.newPlot(element, [], lout, config);
   }
+
+  // put the run speed test button under whichever element the speedtest
+  // chart was drawn in
+  document.getElementById(element).appendChild(
+    document.getElementById('runspeedtest')
+  )
 }
 
 const renderObstructionMap = (data) => {
@@ -376,13 +392,16 @@ const renderObstructionMap = (data) => {
   const lout = {
     title: {
       text: 'Obstructions',
+      // try to center title over the chart - the legend shifts the fig size
+      xanchor: 'middle',
+      x: 0.3,
       font: {
         size: 18
       }
     },
     font: {
       color: 'white',
-      size: document.body.clientWidth < 1000 ? 18 : 12
+      size: singleColumnView() ? 18 : 12
     },
     legend: {
       x: 1,
@@ -443,6 +462,12 @@ const triggerSpeedtest = () => {
   }
   setTimeout(fade, 2000)
 }
+
+
+const singleColumnView = () => {
+  return document.body.clientWidth < 1000
+}
+
 
 // keep track of y max values for charts with dynamic ranges so that we
 // don't bump the y axis limits with every refresh - use the max value observed
