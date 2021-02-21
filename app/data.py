@@ -101,7 +101,14 @@ def _update_starlink_history():
 
 
 def _update_starlink_status():
-    for k, v in starlink.status().items():
+    status = starlink.status()
+    # keep integer index, similar to that provide in starlink_history -
+    # this will allow us to sample with consistent offsets and avoid
+    # aliasing problems when downsampling
+    DATA['starlink_status']['index'].append(
+        DATA['starlink_status'].get('index', [0])[-1] + 1
+    )
+    for k, v in status.items():
         DATA['starlink_status'][k].append(v)
 
     DATA['starlink_status'] = _trim_buffer(DATA['starlink_status'])
@@ -134,13 +141,16 @@ def _sample_buffer(b, max_data_points):
         if stride <= 1:
             return vals
         else:
+            # start at an index value that's an integer multiple of the stride
+            # to avoid aliasing issues
+            start = stride - divmod(b['index'][0], stride)[1]
             try:
                 return [
                     sum(sample) / len(sample) if sample else None
-                    for i in range(stride, len(vals), stride)
+                    for i in range(start, len(vals), stride)
                     for sample in [[
                         v
-                        for v in vals[i - stride: i + stride]
+                        for v in vals[max(0, i - stride): i + stride]
                         if v is not None
                     ]]
                 ]
@@ -148,7 +158,7 @@ def _sample_buffer(b, max_data_points):
                 # non-numeric type
                 return [
                     vals[i]
-                    for i in range(stride, len(vals), stride)
+                    for i in range(start, len(vals), stride)
                 ]
 
     return {
