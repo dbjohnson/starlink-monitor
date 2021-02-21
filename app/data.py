@@ -106,7 +106,7 @@ def _update_starlink_status():
     # this will allow us to sample with consistent offsets and avoid
     # aliasing problems when downsampling
     DATA['starlink_status']['index'].append(
-        DATA['starlink_status'].get('index', [0])[-1] + 1
+        (DATA['starlink_status']['index'] or [0])[-1] + 1
     )
     for k, v in status.items():
         DATA['starlink_status'][k].append(v)
