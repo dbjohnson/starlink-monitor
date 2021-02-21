@@ -2,7 +2,7 @@
 
 [![push to dockerhub](https://github.com/dbjohnson/starlink-monitor/workflows/push%20to%20dockerhub/badge.svg)](https://hub.docker.com/repository/docker/dbryanjohnson/starlink-monitor)
 
-Basic [monitoring webapp](http://localhost:3000) for [Starlink](https://starlink.com)
+Basic monitoring web app for [Starlink](https://starlink.com)
 
 Inspired by [ChuckTSI's work](https://github.com/ChuckTSI/BetterThanNothingWebInterface)
 
@@ -19,6 +19,19 @@ docker run -d -p 3000:80 \
     -e SPEEDTEST_REFRESH_MINS=30 \
     -e BUFFER_SIZE_HOURS=72 \
     dbryanjohnson/starlink-monitor:latest
+```
+
+For raspberry pi, try the `armhf` tag, and use `--platform arm`:
+```
+docker run -d -p 3000:80 \
+    -e STARLINK_URI=192.168.100.1:9200 \
+    -e STARLINK_REFRESH_SECS=1 \
+    -e STARLINK_HISTORY_REFRESH_SECS=30 \
+    -e BROADCAST_RATE_SECS=3 \
+    -e SPEEDTEST_REFRESH_MINS=30 \
+    -e BUFFER_SIZE_HOURS=72 \
+	--platform arm \
+    dbryanjohnson/starlink-monitor:armhf
 ```
 
 View at [http://localhost:3000](http://localhost:3000)
