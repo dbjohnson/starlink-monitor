@@ -21,7 +21,7 @@ docker run -d -p 3000:80 \
     dbryanjohnson/starlink-monitor:latest
 ```
 
-For raspberry pi, try the `armhf` tag, and use `--platform arm`:
+#### For raspberry pi, try the `armhf` tag, and use `--platform arm`:
 ```
 docker run -d -p 3000:80 \
     -e STARLINK_URI=192.168.100.1:9200 \
@@ -30,7 +30,7 @@ docker run -d -p 3000:80 \
     -e BROADCAST_RATE_SECS=3 \
     -e SPEEDTEST_REFRESH_MINS=30 \
     -e BUFFER_SIZE_HOURS=72 \
-	--platform arm \
+    --platform arm \
     dbryanjohnson/starlink-monitor:armhf
 ```
 
