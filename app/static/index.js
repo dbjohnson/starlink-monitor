@@ -449,18 +449,22 @@ const renderObstructionMap = (data) => {
 const triggerSpeedtest = () => {
   fetch('/api/trigger_speedtest')
 
-  // show alert, then fade out
-  const modal = document.getElementById('speedtestmodal')
-  modal.style.opacity = 1
-  const fade = () => {
-    modal.style.opacity *= 0.9
-    if (modal.style.opacity < 0.2) {
-      modal.style.opacity = 0
-    } else {
-      setTimeout(fade, 30)
+  if (singleColumnView()) {
+    window.alert('Speedtest initiated')
+  } else {
+    // show alert, then fade out
+    const modal = document.getElementById('speedtestmodal')
+    modal.style.opacity = 1
+    const fade = () => {
+      modal.style.opacity *= 0.9
+      if (modal.style.opacity < 0.2) {
+        modal.style.opacity = 0
+      } else {
+        setTimeout(fade, 30)
+      }
     }
+    setTimeout(fade, 2000)
   }
-  setTimeout(fade, 2000)
 }
 
 
