@@ -1,5 +1,6 @@
 # starlink-monitor
 
+[![Docker pulls](https://img.shields.io/docker/pulls/dbryanjohnson/starlink-monitor)](https://hub.docker.com/repository/docker/dbryanjohnson/starlink-monitor)
 [![push to dockerhub](https://github.com/dbjohnson/starlink-monitor/workflows/push%20to%20dockerhub/badge.svg)](https://hub.docker.com/repository/docker/dbryanjohnson/starlink-monitor)
 
 Basic monitoring web app for [Starlink](https://starlink.com)
