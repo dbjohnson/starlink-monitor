@@ -191,17 +191,21 @@ def broadcast(socketio, secs_history, update_rate=BROADCAST_RATE_SECS):
     )
 
 
-scheduler.repeat(
-    _update_starlink_status,
-    interval=datetime.timedelta(seconds=STARLINK_REFRESH_SECS)
-)
+def start_polling():
+    """
+    Start polling starlink for data, and performing perioic speedtests
+    """
+    scheduler.repeat(
+        _update_starlink_status,
+        interval=datetime.timedelta(seconds=STARLINK_REFRESH_SECS)
+    )
 
-scheduler.repeat(
-    _update_starlink_history,
-    interval=datetime.timedelta(seconds=STARLINK_HISTORY_REFRESH_SECS)
-)
+    scheduler.repeat(
+        _update_starlink_history,
+        interval=datetime.timedelta(seconds=STARLINK_HISTORY_REFRESH_SECS)
+    )
 
-scheduler.repeat(
-    _update_speedtest,
-    interval=datetime.timedelta(minutes=SPEEDTEST_REFRESH_MINS)
-)
+    scheduler.repeat(
+        _update_speedtest,
+        interval=datetime.timedelta(minutes=SPEEDTEST_REFRESH_MINS)
+    )

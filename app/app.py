@@ -6,6 +6,7 @@ from flask_socketio import SocketIO
 
 from . import data
 
+
 app = Flask(__name__)
 socketio = SocketIO(app, async_mode='threading')
 
@@ -39,4 +40,5 @@ def _set_timespan(d):
 
 
 if __name__ == '__main__':
+    data.start_polling()
     socketio.run(app, debug=True, host='0.0.0.0', port=80)
