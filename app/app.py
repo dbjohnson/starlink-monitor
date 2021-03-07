@@ -12,8 +12,10 @@ socketio = SocketIO(app, async_mode='threading')
 
 @app.route('/api/data')
 def _data():
-    secs = int(request.args.get('secs', data.BUFFER_SIZE_SECS))
-    return jsonify(data.latest(secs))
+    return jsonify(data.latest(
+        int(request.args.get('secs', data.BUFFER_SIZE_SECS)),
+        int(request.args.get('datapoints', data.BUFFER_SIZE_SECS))
+    ))
 
 
 @app.route('/api/trigger_speedtest')
