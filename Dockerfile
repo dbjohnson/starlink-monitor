@@ -13,6 +13,11 @@ WORKDIR /usr/local/bin
 RUN apt-get update && apt-get install -y curl
 RUN cd /usr/local/bin && curl -L https://github.com/fullstorydev/grpcurl/releases/download/v1.8.0/grpcurl_1.8.0_linux_x86_64.tar.gz | tar xzv
 
+# install npm & speed-cloudflare-cli
+RUN curl -sL https://deb.nodesource.com/setup_12.x | bash -
+RUN apt install -y nodejs
+RUN npm install -g speed-cloudflare-cli
+
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 # install requirements, copy over the app

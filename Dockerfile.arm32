@@ -17,6 +17,11 @@ RUN mv /root/go/bin/grpcurl /usr/bin/
 # cleanup after install - dozens of MBs in here
 RUN rm -rf /root/go
 
+# install npm & speed-cloudflare-cli
+RUN curl -sL https://deb.nodesource.com/setup_12.x | bash -
+RUN apt install -y nodejs
+RUN npm install -g speed-cloudflare-cli
+
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 # install requirements, copy over the app

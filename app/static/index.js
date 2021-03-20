@@ -284,17 +284,22 @@ const renderSpeedTest = (data, element) => {
   if (data.speedtest.timestamp) {
     const hover = data.speedtest.timestamp.map((s, i) => [
       `date: ${(new Date(s * 1000)).toLocaleString()}`,
-      `ISP: ${data.speedtest.client[i].isp}`,
-      `host: ${data.speedtest.server[i].sponsor} (${data.speedtest.server[i].name})`,
-      `ping: ${data.speedtest.ping[i].toFixed(1)} ms`,
-      `download: ${(data.speedtest.download[i] / 1e6).toFixed(0)} Mbps (rec: ${(data.speedtest.bytes_received[i] / 1e6).toFixed(0)} MB)`,
-      `upload: ${(data.speedtest.upload[i] / 1e6).toFixed(0)} Mbps (sent: ${(data.speedtest.bytes_sent[i] / 1e6).toFixed(0)} MB)`
+      `server: ${data.speedtest["Server location"][i]}`,
+      `latency: ${data.speedtest["Latency"][i].toFixed(1)} ms`,
+      `jitter: ${data.speedtest["Jitter"][i].toFixed(1)} ms`,
+      `100kB: ${(data.speedtest["100kB speed"][i]).toFixed(0)} Mbps`,
+      `1MB: ${(data.speedtest["1MB speed"][i]).toFixed(0)} Mbps`,
+      `10MB: ${(data.speedtest["10MB speed"][i]).toFixed(0)} Mbps`,
+      `25MB: ${(data.speedtest["25MB speed"][i]).toFixed(0)} Mbps`,
+      `100MB: ${(data.speedtest["100MB speed"][i]).toFixed(0)} Mbps`,
+      `download: ${(data.speedtest["Download speed"][i]).toFixed(0)} Mbps`,
+      `upload: ${(data.speedtest["Upload speed"][i]).toFixed(0)} Mbps`
     ].join('<br>'))
 
     const x = data.speedtest.timestamp.map(ts => new Date(ts * 1000))
     const pdata = [{
       x: x,
-      y: data.speedtest.download.map(d => d / 1e6),
+      y: data.speedtest["Download speed"],
       text: hover,
       hoverinfo: 'text',
       hoverlabel: {
@@ -311,7 +316,7 @@ const renderSpeedTest = (data, element) => {
       }
     }, {
       x: x,
-      y: data.speedtest.upload.map(u => u / 1e6),
+      y: data.speedtest["Upload speed"],
       hoverinfo: 'skip',
       type: 'scatter',
       fill: 'tozeroy',
