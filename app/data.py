@@ -137,7 +137,7 @@ def _trim_buffer(b, secs_history=BUFFER_SIZE_SECS):
         return defaultdict(list)
 
 
-def _sample_buffer(b, max_data_points, aggfunc=max):
+def _sample_buffer(b, max_data_points):
     def smooth(k, vals):
         stride = ceil(len(vals) / max_data_points)
         if stride <= 1:
@@ -148,7 +148,7 @@ def _sample_buffer(b, max_data_points, aggfunc=max):
             start = stride - divmod(b['index'][0], stride)[1]
             try:
                 return [
-                    aggfunc(sample) if sample else None
+                    sum(sample) / len(sample) if sample else None
                     for i in range(start, len(vals), stride)
                     for sample in [[
                         v
