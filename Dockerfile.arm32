@@ -18,8 +18,9 @@ RUN mv /root/go/bin/grpcurl /usr/bin/
 RUN rm -rf /root/go
 
 # install npm & speed-cloudflare-cli
-RUN curl -sL https://deb.nodesource.com/setup_12.x | bash -
-RUN apt install -y nodejs
+RUN curl -o node-v9.7.1-linux-armv6l.tar.gz https://nodejs.org/dist/v9.7.1/node-v9.7.1-linux-armv6l.tar.gz
+RUN tar -xzf node-v9.7.1-linux-armv6l.tar.gz
+RUN cp -r node-v9.7.1-linux-armv6l/* /usr/local/
 RUN npm install -g speed-cloudflare-cli
 
 RUN mkdir -p /usr/src/app
