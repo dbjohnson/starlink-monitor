@@ -8,13 +8,6 @@ ENV BROADCAST_RATE_SECS=3
 ENV SPEEDTEST_REFRESH_MINS=30
 ENV BUFFER_SIZE_HOURS=72
 
-# install npm & speed-cloudflare-cli
-RUN apt-get update && apt-get install -y --no-install-recommends curl
-RUN curl -o node-v9.7.1-linux-armv7l.tar.gz https://nodejs.org/dist/v9.7.1/node-v9.7.1-linux-armv7l.tar.gz
-RUN tar -xzf node-v9.7.1-linux-armv7l.tar.gz
-RUN cp -r node-v9.7.1-linux-armv7l/* /usr/local/
-RUN /usr/local/bin/npm install -g speed-cloudflare-cli
-
 # install grpcurl
 WORKDIR /usr/local/bin
 # install from source - requires golang
