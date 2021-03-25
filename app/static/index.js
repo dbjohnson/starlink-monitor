@@ -95,7 +95,13 @@ const startBroadcast = () => {
 
 
 const render = (data) => {
-  document.getElementById('lastupdate').innerHTML = 'Updated: ' + (new Date()).toLocaleTimeString()
+  if (data.status) {
+    const idx = data.status.deviceInfo.length - 1
+    document.getElementById('lastupdate').innerHTML = 'Updated: ' + (new Date()).toLocaleTimeString()
+    document.getElementById('uptime').innerHTML = 'Uptime: ' + (data.status.deviceState[idx].uptimeS / 3600).toFixed(1) + ' hours'
+    document.getElementById('firmware').innerHTML = 'Firmware: ' + data.status.deviceInfo[idx].softwareVersion
+  }
+
   // different layout for single vs 2 column views
   if (singleColumnView()) {
     renderThroughput(data, 'g1')
@@ -113,6 +119,7 @@ const render = (data) => {
     renderDowntime(data, 'g6')
   }
   renderObstructionMap(data)
+
 }
 
 
