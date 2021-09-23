@@ -1,0 +1,20 @@
+[Unit]
+Description=Starlink monitor service
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python3 -m app.app
+WorkingDirectory=/opt/starlink-monitor
+Environment=STARLINK_URI=192.168.100.1:9200
+Environment=STARLINK_REFRESH_SECS=1
+Environment=STARLINK_HISTORY_REFRESH_SECS=30
+Environment=BROADCAST_RATE_SECS=3
+Environment=SPEEDTEST_REFRESH_MINS=30
+Environment=BUFFER_SIZE_HOURS=72
+Environment=SERVER_HTTP_PORT=80
+Restart=always
+RestartSec=2
+
+[Install]
+WantedBy=multi-user.target
+

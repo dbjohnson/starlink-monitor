@@ -5,3 +5,4 @@ ipython==7.20.0
 ipython-genutils==0.2.0
 python-socketio==5.0.4
 tinysched==0.1.2
+eventlet==0.32.0
