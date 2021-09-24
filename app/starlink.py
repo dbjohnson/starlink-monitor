@@ -33,15 +33,17 @@ def history():
     for i in range(datapoints)
   ]
 
-  # start 387821, current: 388721, bufferlen: 900, datapoints: 900,
   return {
     'index': list(range(current - datapoints + 1, current + 1)),
     'timestamp': [
       now + offs + 1
       for offs in range(-datapoints, 0)
     ],
+    'outages': h['outages'],
     **{
-      k: [v[idx] for idx in unroll_idx]
+      k: [
+        v[idx] for idx in unroll_idx
+      ]
       for k, v in h.items()
       if k != 'current' and k != 'outages'
     }

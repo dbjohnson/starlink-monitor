@@ -102,6 +102,8 @@ const render = (data) => {
     document.getElementById('firmware').innerHTML = 'Firmware: ' + data.status.deviceInfo[idx].softwareVersion
   }
 
+  document.getElementById('togglespeedtest').checked = data.speedtestEnabled
+
   // different layout for single vs 2 column views
   if (singleColumnView()) {
     renderThroughput(data, 'g1')
@@ -109,7 +111,8 @@ const render = (data) => {
     renderPingDrop(data, 'g3')
     renderSNR(data, 'g4')
     renderDowntime(data, 'g5')
-    renderSpeedTest(data, 'g6')
+    renderOutage(data, 'g6')
+    renderSpeedTest(data, 'g7')
   } else {
     renderPing(data, 'g1')
     renderThroughput(data, 'g2')
@@ -117,6 +120,7 @@ const render = (data) => {
     renderSpeedTest(data, 'g4')
     renderSNR(data, 'g5')
     renderDowntime(data, 'g6')
+    renderOutage(data, 'g7')
   }
   renderObstructionMap(data)
 
@@ -248,6 +252,79 @@ const renderThroughput = (data, element) => {
   )
 }
 
+const renderOutage = (data, element) => {
+  const EPOCH_DECAL = 315964762800
+  let outage_found = false
+  let pdata = [{
+    x: [],
+    y: [],
+    text: [],
+    hoverinfo: 'text',
+    hoverlabel: {
+      align: 'left',
+      bgcolor: '#000',
+      bordercolor: '#000',
+      font: { color: 'white' }
+    },
+    type: 'bar',
+    name: 'outages',
+    marker: {
+      color: d3colors[0],
+      colorscale: 'Portland',
+      cmin: 1,
+      cmax: 0,
+    }
+  }]
+
+  if (data.starlink.outages != null) {
+    const history = document.getElementById('history')
+    const secs = history ? parseInt(history.value) : 600
+    const date_limit = Date.now() - secs * 1000
+
+    let filtered_outages = data.starlink.outages.filter((item) => item != null && (item.startTimestampNs / 1000000 + EPOCH_DECAL) - date_limit > 0)
+
+    outage_found = filtered_outages.length > 0
+    pdata[0].text = filtered_outages.map((item) => [
+      `cause: ${item.cause}`,
+      `did switch?: ${(item.didSwitch != null) ? item.didSwitch : false}`,
+      `date: ${(new Date(item.startTimestampNs / 1000000 + EPOCH_DECAL)).toLocaleString()}`,
+      `duration (s): ${item.durationNs / 1000000000}`
+    ].join('<br>'))
+
+    pdata[0].x = filtered_outages.map((item) => new Date(item.startTimestampNs / 1000000 + EPOCH_DECAL))
+    pdata[0].y = filtered_outages.map((item) => item.durationNs / 1000000)
+    pdata[0].marker.color = pdata[0].y
+  }
+
+  if (outage_found) {
+    const lout = layout(
+      'outages',
+      false,
+      updateYmax('outages', pdata[0].y)
+    )
+
+    lout.hovermode = 'text'
+    Plotly.newPlot(element, pdata, lout, config);
+  } else {
+    const lout = layout('outages', false)
+
+    lout.xaxis.zeroline = false
+    lout.xaxis.tickmode = 'array'
+    lout.xaxis.tickvals = []
+    lout.xaxis.range = [0, 1]
+    lout.yaxis.zeroline = false
+    lout.yaxis.tickmode = 'array'
+    lout.yaxis.tickvals = []
+    lout.yaxis.range = [0, 1]
+    lout.annotations = [{
+      x: 0.1,
+      y: 0.5,
+      showarrow: false,
+      text: 'No outage',
+    }]
+    Plotly.newPlot(element, [], lout, config);
+  }
+}
 
 const renderDowntime = (data, element) => {
   const x = data.starlink.timestamp.map(ts => new Date(ts * 1000))
@@ -361,8 +438,8 @@ const renderSpeedTest = (data, element) => {
 
   // put the run speed test button under whichever element the speedtest
   // chart was drawn in
-  document.getElementById(element).appendChild(
-    document.getElementById('runspeedtest')
+  document.getElementById(element).appendChild(  
+    document.getElementById('speedtest_container')
   )
 }
 
@@ -479,6 +556,9 @@ const triggerSpeedtest = () => {
   }
 }
 
+const toggleSpeedtest = () => {
+  fetch('/api/toggle_speedtest')
+}
 
 const singleColumnView = () => {
   return document.body.clientWidth < 1000
@@ -493,7 +573,8 @@ const yMaxHist = {
   ping: [],
   pingdrop: [],
   throughput: [],
-  speedtests: []
+  speedtests: [],
+  outages: []
 }
 
 const updateYmax = (chart, yVals) => {

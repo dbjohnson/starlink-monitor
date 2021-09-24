@@ -35,9 +35,15 @@
     <div>
       <div id="g6"></div>
     </div>
+    <div>
+      <div id="g7"></div>
+    </div>
   </div>
 
-  <button id="runspeedtest" style="margin-left:40%" onclick="triggerSpeedtest()">Run speedtest now</button>
+  <div id="speedtest_container">
+    <button id="runspeedtest" style="margin-left:40%" onclick="triggerSpeedtest()">Run speedtest now</button>
+    <input type="checkbox" id="togglespeedtest" onclick="toggleSpeedtest()" />Schedule speedtest?
+  </div>
   <br>
 
   <div>

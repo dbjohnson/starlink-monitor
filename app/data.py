@@ -7,9 +7,10 @@ Polling frequencies can be set via env, see below.
 import os
 import time
 import datetime
+
 from collections import defaultdict
 from math import ceil
-
+from . import config
 from . import speedtest
 from . import starlink
 from . import ip
@@ -18,7 +19,6 @@ from tinysched import scheduler
 
 
 print('data.py automatically runs status update checks in the background')
-
 
 BROADCAST_RATE_SECS = int(os.getenv('BROADCAST_RATE_SECS', 3))
 STARLINK_REFRESH_SECS = int(os.getenv('STARLINK_REFRESH_SECS', 1))
@@ -33,8 +33,7 @@ DATA = {
   'speedtest': defaultdict(list)
 }
 
-
-def latest(history_secs=600, max_data_points=200):
+def latest(history_secs = config.get_history_secs(), max_data_points = config.get_max_data_point()):
   """
   Retrieve latest data, with sampling to indicated
   number of data points
@@ -43,6 +42,7 @@ def latest(history_secs=600, max_data_points=200):
   """
   return {
     'ip_local': ip.local(),
+    'speedtestEnabled': config.is_speedtest_enabled(),
     'speedtest': DATA['speedtest'],
     ** {
       k: _sample_buffer(
@@ -56,6 +56,10 @@ def latest(history_secs=600, max_data_points=200):
     }
   }
 
+def _toggle_speedtest():
+  config.toggle_speedtest()
+
+  return 'OK'
 
 def _starlink_history_merged():
   """
@@ -85,25 +89,24 @@ def _starlink_history_merged():
 
 
 def _update_starlink_history():
-  latest = starlink.history()
+  l_latest = starlink.history()
 
   # if there is a timestamp
   if len(DATA['starlink_history'].get('timestamp', [])):
     # merge data
     maxidx = DATA['starlink_history']['index'][-1]
 
-    for i, idx in enumerate(latest['index']):
+    for i, idx in enumerate(l_latest['index']):
       if idx > maxidx:
         for k, v in DATA['starlink_history'].items():
-          v.extend(latest[k][i:])
+          v.extend(l_latest[k][i:])
         break
     else:
-      DATA['starlink_history'] = latest
+      DATA['starlink_history'] = l_latest
   else:
-    DATA['starlink_history'] = latest
+    DATA['starlink_history'] = l_latest
 
   DATA['starlink_history'] = _trim_buffer(DATA['starlink_history'])
-
 
 def _update_starlink_status():
   status = starlink.status()
@@ -118,23 +121,29 @@ def _update_starlink_status():
 
   DATA['starlink_status'] = _trim_buffer(DATA['starlink_status'])
 
-
-def _update_speedtest():
-  for k, v in speedtest.test().items():
-    DATA['speedtest'][k].append(v)
+def _update_speedtest(force_speedtest = False):
+  if config.is_speedtest_enabled() or force_speedtest:
+    for k, v in speedtest.test().items():
+      DATA['speedtest'][k].append(v)
 
   DATA['speedtest'] = _trim_buffer(DATA['speedtest'])
 
-
-def _trim_buffer(b, secs_history=BUFFER_SIZE_SECS):
+def _trim_buffer(b, secs_history = BUFFER_SIZE_SECS):
   """
   Limit buffer to indicated length
   """
   for i, ts in enumerate(b['timestamp']):
     if ts >= time.time() - secs_history:
       return defaultdict(list, {
-        k: v[i:]
-        for k, v in b.items()
+        # Exception for 'outages' field since it is not
+        # refreshed every n secs, but it is triggered by a external event, then it's registered by
+        # the starlink and kept til it reboots (it seems to work like that)
+        'outages': b['outages'],
+        **{
+          k: v[i:]
+          for k, v in b.items()
+          if k != 'outages'
+        }
       })
   else:
     return defaultdict(list)
@@ -172,7 +181,7 @@ def _sample_buffer(b, max_data_points):
   }
 
 
-def broadcast(socketio, secs_history, update_rate=BROADCAST_RATE_SECS):
+def broadcast(socketio, secs_history, update_rate = BROADCAST_RATE_SECS):
   """
   Broadcast updates via socketui
   """
@@ -189,7 +198,7 @@ def broadcast(socketio, secs_history, update_rate=BROADCAST_RATE_SECS):
   BROADCAST_LOOPS.append(
     scheduler.repeat(
       broadcast,
-      interval=datetime.timedelta(seconds=update_rate)
+      interval = datetime.timedelta(seconds = update_rate)
     )
   )
 
@@ -200,15 +209,15 @@ def start_polling():
   """
   scheduler.repeat(
     _update_starlink_status,
-    interval=datetime.timedelta(seconds=STARLINK_REFRESH_SECS)
+    interval = datetime.timedelta(seconds = STARLINK_REFRESH_SECS)
   )
 
   scheduler.repeat(
     _update_starlink_history,
-    interval=datetime.timedelta(seconds=STARLINK_HISTORY_REFRESH_SECS)
+    interval = datetime.timedelta(seconds = STARLINK_HISTORY_REFRESH_SECS)
   )
 
   scheduler.repeat(
     _update_speedtest,
-    interval=datetime.timedelta(minutes=SPEEDTEST_REFRESH_MINS)
+    interval = datetime.timedelta(minutes = SPEEDTEST_REFRESH_MINS)
   )

@@ -21,13 +21,15 @@ def _data():
 
 @app.route('/api/trigger_speedtest')
 def _speedtest():
-  data._update_speedtest()
+  data._update_speedtest(True)
 
+@app.route('/api/toggle_speedtest')
+def _toggle_speedtest():
+  return data._toggle_speedtest()
 
 @app.route('/')
 def _root():
   return redirect('/index.html')
-
 
 @app.route('/<string:path>')
 def _static(path):
