@@ -107,19 +107,14 @@ const render = (data) => {
     renderThroughput(data, 'g1')
     renderPing(data, 'g2')
     renderPingDrop(data, 'g3')
-    renderSNR(data, 'g4')
-    renderDowntime(data, 'g5')
-    renderSpeedTest(data, 'g6')
+    renderSpeedTest(data, 'g4')
   } else {
     renderPing(data, 'g1')
     renderThroughput(data, 'g2')
     renderPingDrop(data, 'g3')
     renderSpeedTest(data, 'g4')
-    renderSNR(data, 'g5')
-    renderDowntime(data, 'g6')
   }
   renderObstructionMap(data)
-
 }
 
 
@@ -147,36 +142,6 @@ const renderPing = (data, element) => {
     ),
     config
   );
-}
-
-
-const renderSNR = (data, element) => {
-  const x = data.starlink.timestamp.map(ts => new Date(ts * 1000))
-  const y = data.starlink.snr
-  const pdata = [{
-    x: x,
-    y: y.map(y => 9 - y),
-    base: y,
-    text: y.map(y => y.toFixed(1)),
-    type: 'bar',
-    name: 'SNR',
-    hovertemplate: '%{text}',
-    marker: {
-      // invert for colormap: 9 = blue, 0 = red
-      color: y.map(y => -y),
-      colorscale: 'Portland',
-      cmin: -9,
-      cmax: 0,
-    },
-  }]
-
-  const lout = layout('SNR')
-  lout.yaxis.range = [0, 9]
-  lout.yaxis.tickmode = 'array'
-  lout.yaxis.tickvals = [0, 3, 6, 9]
-  lout.yaxis.ticktext = [0, 3, 6, 9]
-
-  Plotly.newPlot(element, pdata, lout, config);
 }
 
 

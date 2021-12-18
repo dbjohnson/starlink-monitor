@@ -24,7 +24,7 @@ def history():
     now = time.time()
 
     # unroll ring buffers
-    bufferlen = len(h['snr'])
+    bufferlen = len(h['popPingDropRate'])
     current = int(h['current'])
     datapoints = min(current, bufferlen)
     start = current - datapoints
@@ -42,7 +42,7 @@ def history():
         **{
             k: [v[idx] for idx in unroll_idx]
             for k, v in h.items()
-            if k != 'current'
+            if len(v) == bufferlen
         }
     }
 
