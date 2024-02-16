@@ -1,8 +1,9 @@
-Flask==1.1.2
-Flask-SocketIO==5.0.1
+Flask==3.0.2
+Flask-SocketIO==5.3.6
 # ipython for convenience only
 ipython==7.20.0
 ipython-genutils==0.2.0
 python-socketio==5.0.4
+simple-websocket==1.0.0
 speedtest-cli==2.1.2
 tinysched==0.1.2
