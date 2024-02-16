@@ -10,6 +10,9 @@ jobs:
       - 
         name: Fetch repository
         uses: actions/checkout@main
+      - 
+        name: pre-commit
+        uses: pre-commit-ci/lite-action@v1.0.2
       -
         name: Login to DockerHub
         uses: docker/login-action@v1
