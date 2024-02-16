@@ -1,0 +1,12 @@
+name: test
+on: [push]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.9"]
+    steps:
+      - 
+        name: pre-commit
+        uses: pre-commit-ci/lite-action@v1.0.2
