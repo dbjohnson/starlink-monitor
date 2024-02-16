@@ -41,8 +41,8 @@ select {
 
 .obst {
   margin: auto;
-  height: 400px;
-  width: 400px;
+  height: 500px;
+  width: 500px;
 }
 
 .grid-container>div>div {

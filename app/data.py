@@ -45,6 +45,7 @@ def latest(history_secs=600, max_data_points=200):
     return {
         "ip_local": ip.local(),
         "speedtest": DATA["speedtest"],
+        "obstruction": starlink.obstruction_map(),
         **{
             k: _sample_buffer(_trim_buffer(v, history_secs), max_data_points)
             for k, v in {
@@ -102,7 +103,7 @@ def _update_starlink_history():
 
 def _update_starlink_status():
     status = starlink.status()
-    # keep integer index, similar to that provide in starlink_history -
+    # keep integer index, similar to that provided in starlink_history -
     # this will allow us to sample with consistent offsets and avoid
     # aliasing problems when downsampling
     DATA["starlink_status"]["index"].append(
@@ -181,7 +182,7 @@ def broadcast(socketio, secs_history, update_rate=BROADCAST_RATE_SECS):
 
 def start_polling():
     """
-    Start polling starlink for data, and performing perioic speedtests
+    Start polling starlink for data, and performing periodic speedtests
     """
     scheduler.repeat(
         _update_starlink_status,

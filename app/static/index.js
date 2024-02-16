@@ -256,22 +256,17 @@ const renderSpeedTest = (data, element) => {
   if (data.speedtest.timestamp) {
     const hover = data.speedtest.timestamp.map((s, i) => [
       `date: ${(new Date(s * 1000)).toLocaleString()}`,
-      `server: ${data.speedtest["Server location"][i]}`,
-      `latency: ${data.speedtest["Latency"][i].toFixed(1)} ms`,
-      `jitter: ${data.speedtest["Jitter"][i].toFixed(1)} ms`,
-      `100kB: ${(data.speedtest["100kB speed"][i]).toFixed(0)} Mbps`,
-      `1MB: ${(data.speedtest["1MB speed"][i]).toFixed(0)} Mbps`,
-      `10MB: ${(data.speedtest["10MB speed"][i]).toFixed(0)} Mbps`,
-      `25MB: ${(data.speedtest["25MB speed"][i]).toFixed(0)} Mbps`,
-      `100MB: ${(data.speedtest["100MB speed"][i]).toFixed(0)} Mbps`,
-      `download: ${(data.speedtest["Download speed"][i]).toFixed(0)} Mbps`,
-      `upload: ${(data.speedtest["Upload speed"][i]).toFixed(0)} Mbps`
+      `ISP: ${data.speedtest.client[i].isp}`,
+      `host: ${data.speedtest.server[i].sponsor} (${data.speedtest.server[i].name})`,
+      `ping: ${data.speedtest.ping[i].toFixed(1)} ms`,
+      `download: ${(data.speedtest.download[i] / 1e6).toFixed(0)} Mbps (rec: ${(data.speedtest.bytes_received[i] / 1e6).toFixed(0)} MB)`,
+      `upload: ${(data.speedtest.upload[i] / 1e6).toFixed(0)} Mbps (sent: ${(data.speedtest.bytes_sent[i] / 1e6).toFixed(0)} MB)`
     ].join('<br>'))
 
     const x = data.speedtest.timestamp.map(ts => new Date(ts * 1000))
     const pdata = [{
       x: x,
-      y: data.speedtest["Download speed"],
+      y: data.speedtest.download.map(d => d / 1e6),
       text: hover,
       hoverinfo: 'text',
       hoverlabel: {
@@ -288,7 +283,7 @@ const renderSpeedTest = (data, element) => {
       }
     }, {
       x: x,
-      y: data.speedtest["Upload speed"],
+      y: data.speedtest.upload.map(d => d / 1e6),
       hoverinfo: 'skip',
       type: 'scatter',
       fill: 'tozeroy',
@@ -332,95 +327,62 @@ const renderSpeedTest = (data, element) => {
 }
 
 const renderObstructionMap = (data) => {
-  const obst = data.status.obstructionStats[data.status.obstructionStats.length - 1]
-  const maxseen = obst.wedgeFractionObstructed.map((w, i) => {
-    const vals = data.status.obstructionStats.map(r => r.wedgeFractionObstructed[i])
-    return Math.max(...vals)
-  })
+  const colorscale = [
+    [0, '#00000000'],  // Transparent for the value -1
+    [0.5, '#c94842'],
+    [1, '#5883a6']
+  ];
+
+  const obst = data.obstruction;
+  const info = data.status.obstructionStats[0];
 
   const pdata = [{
-    type: 'scatterpolar',
-    mode: 'lines',
-    name: 'max',
-    r: maxseen.map(w => [w, w, w]).reduce((l, r) => l.concat(r), []),
-    theta: maxseen.map((w, i) => i * 30).map(
-      theta => [theta - 15, theta, theta + 15]
-    ).reduce((l, r) => l.concat(r), []),
-    fill: 'toself',
-    fillcolor: d3colors[0] + '88',
-    line: {
-      color: d3colors[0] + '88'
-    }
-  }, {
-    type: 'scatterpolar',
-    mode: 'lines',
-    name: 'latest',
-    r: obst.wedgeFractionObstructed.map(w => [w, w, w]).reduce((l, r) => l.concat(r), []),
-    theta: obst.wedgeFractionObstructed.map((w, i) => i * 30).map(
-      theta => [theta - 15, theta, theta + 15]
-    ).reduce((l, r) => l.concat(r), []),
-    fill: 'toself',
-    fillcolor: d3colors[1] + '88',
-    line: {
-      color: d3colors[1] + '88'
-    }
+    type: 'heatmap',
+    x: Array.from({ length: obst.numCols }, (_, i) => i),
+    y: Array.from({ length: obst.numRows }, (_, i) => i),
+    z: Array.from({ length: obst.numRows }, (_, i) => obst.snr.slice(i * obst.numCols, (i + 1) * (obst.numCols))),
+    zmin: -1,
+    zmax: 1,
+    colorscale: colorscale,
+    showscale: false
   }]
 
   const lout = {
+    xaxis: { autorange: 'reversed', mirror: true, linecolor: "#5883a690", tickvals: [] },
+    yaxis: { mirror: true, linecolor: "#5883a690", tickvals: []},
     title: {
       text: 'Obstructions',
       // try to center title over the chart - the legend shifts the fig size
       xanchor: 'middle',
-      x: 0.3,
+      x: 0.5,
       font: {
-        size: 18
+        size: 18,
+        color: 'white'
       }
     },
     font: {
       color: 'white',
       size: singleColumnView() ? 18 : 12
     },
-    legend: {
-      x: 1,
-      xanchor: 'left',
-      y: 0.9,
-      bgcolor: '#fff0',
-    },
-    paper_bgcolor: '#fff0',
-    polar: {
-      bgcolor: '#fff0',
-      radialaxis: {
-        tickfont: {
-          size: 12
-        },
-        angle: 0,
-        nticks: 4,
-        range: [0, Math.max(...maxseen.concat([0.03]))],
-        fixedrange: true,
-      },
-      angularaxis: {
-        tickfont: {
-          size: 12
-        },
-        dtick: 45,
-        tickmode: 'array',
-        tickvals: [
-          0, 45, 90, 135, 180, 225, 270, 315
-        ],
-        ticktext: [
-          'N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'
-        ],
-        rotation: 90,
-        direction: 'clockwise',
-        fixedrange: true,
-      }
-    },
+    paper_bgcolor: '#FFF0',
+    plot_bgcolor: '#FFF0',
     autoscale: true,
     margin: { pad: 0, l: 20, r: 20, t: 50, b: 20, autoexpand: true },
-    showlegend: true
+    annotations: [
+      {
+        x: obst.numCols / 2,
+        y: obst.numRows - 5,
+        xref: 'x',
+        yref: 'y',
+        color: 'white',
+        align: 'left',
+        text: (info.avgProlongedObstructionDurationS > 0) ? `${(info.fractionObstructed * 100).toFixed(1)}% obstructed<br>Expect ${info.avgProlongedObstructionDurationS.toFixed(1)}s interruptions every ${(info.avgProlongedObstructionIntervalS / 60).toFixed(0)} minutes` : '',
+        showarrow: false,
+      }
+    ]
   }
 
-  Plotly.newPlot('obstructions', pdata, lout, config)
+Plotly.newPlot('obstructions', pdata, lout, config);
 }
 
 const triggerSpeedtest = () => {
