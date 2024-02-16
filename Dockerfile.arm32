@@ -18,7 +18,7 @@ RUN npm install -g speed-cloudflare-cli
 
 # install grpcurl from source (no pre-compiled binaries available for arm)
 WORKDIR /usr/local/bin
-RUN go get github.com/fullstorydev/grpcurl/... && go install github.com/fullstorydev/grpcurl/cmd/grpcurl@1.8.0
+RUN go get github.com/fullstorydev/grpcurl/... && go install github.com/fullstorydev/grpcurl/cmd/grpcurl@v1.8.0
 RUN mv /root/go/bin/grpcurl /usr/bin/
 # cleanup after install - dozens of MBs in here
 RUN rm -rf /root/go
