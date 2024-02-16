@@ -1,6 +1,6 @@
 FROM arm32v6/node:15.12.0-alpine3.12
 
-# cheat code:  copy golang executable from sibling container, 
+# cheat code:  copy golang executable from sibling container,
 # rather than building from source
 COPY --from=arm32v6/golang:alpine3.12 /usr/local/go/ /usr/local/go/
 
@@ -18,7 +18,7 @@ RUN npm install -g speed-cloudflare-cli
 
 # install grpcurl from source (no pre-compiled binaries available for arm)
 WORKDIR /usr/local/bin
-RUN go get github.com/fullstorydev/grpcurl/... && go install github.com/fullstorydev/grpcurl/cmd/grpcurl@latest
+RUN go get github.com/fullstorydev/grpcurl/... && go install github.com/fullstorydev/grpcurl/cmd/grpcurl@1.8.0
 RUN mv /root/go/bin/grpcurl /usr/bin/
 # cleanup after install - dozens of MBs in here
 RUN rm -rf /root/go
