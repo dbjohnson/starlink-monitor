@@ -7,4 +7,4 @@ def local():
 
 
 def public():
-    return request.urlopen('http://ip.42.pl/raw').read().decode()
+    return request.urlopen("http://ip.42.pl/raw").read().decode()
