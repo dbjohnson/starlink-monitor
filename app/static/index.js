@@ -367,7 +367,7 @@ const renderObstructionMap = (data) => {
     paper_bgcolor: '#FFF0',
     plot_bgcolor: '#FFF0',
     autoscale: true,
-    margin: { pad: 0, l: 20, r: 20, t: 50, b: 20, autoexpand: true },
+    margin: { pad: 0, l: 20, r: 20, t: 30, b: 20, autoexpand: false },
     annotations: [
       {
         x: obst.numCols / 2,
@@ -402,7 +402,7 @@ const triggerSpeedtest = () => {
         setTimeout(fade, 30)
       }
     }
-    setTimeout(fade, 2000)
+    setTimeout(fade, 5000)
   }
 }
 
